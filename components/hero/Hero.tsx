@@ -1,0 +1,240 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { INTRO_EVENT } from "@/lib/intro";
+
+const FPS = 25;
+const HEADLINE = ["Cutting", "images into", "stories."];
+
+/** HH:MM:SS:FF — time the way an edit suite reads it. */
+function timecode(seconds: number) {
+  const t = Math.max(0, seconds);
+  return [t / 3600, (t % 3600) / 60, t % 60, (t % 1) * FPS]
+    .map((n) => String(Math.floor(n)).padStart(2, "0"))
+    .join(":");
+}
+
+export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const tcRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    const media = mediaRef.current;
+    const video = videoRef.current;
+    const headline = headlineRef.current;
+    const footer = footerRef.current;
+    const tc = tcRef.current;
+    if (!section || !media || !video || !headline || !footer || !tc) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia(section);
+
+    // React does not serialise `muted` into server HTML; without it Chrome refuses to autoplay.
+    video.muted = true;
+    video.defaultMuted = true;
+
+    // Live timecode readout — one text write per frame at most.
+    let raf = 0;
+    let last = "";
+    const tick = () => {
+      const next = timecode(video.currentTime);
+      if (next !== last) {
+        tc.textContent = next;
+        last = next;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    // ---- Opening sequence ---------------------------------------------------
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      video.play().catch(() => {});
+
+      const lines = gsap.utils.toArray<HTMLElement>("[data-line]", headline);
+      const meta = gsap.utils.toArray<HTMLElement>("[data-intro]", footer);
+      const rule = footer.querySelector("[data-rule]");
+      const arrow = footer.querySelector("[data-arrow]");
+
+      const tl = gsap
+        .timeline({ paused: true, defaults: { ease: "power3.out" } })
+        // 0.4s — the image surfaces out of the dark, settling from a hair larger.
+        .fromTo(video, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 0.4)
+        .fromTo(video, { scale: 1.04 }, { scale: 1, duration: 1.4 }, 0.4)
+        // 1.1s — headline, line by line, unmasked with a few pixels of lift.
+        .fromTo(
+          lines,
+          { clipPath: "inset(0 0 100% 0)", y: 20 },
+          { clipPath: "inset(0 0 0% 0)", y: 0, duration: 0.7, stagger: 0.1 },
+          1.1,
+        )
+        // 1.5s — production metadata.
+        .fromTo(
+          meta,
+          { opacity: 0, y: 6 },
+          { opacity: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power2.out" },
+          1.5,
+        )
+        .fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "power3.inOut" }, 1.5)
+        // Afterwards the image breathes, barely.
+        .to(video, { scale: 1.025, duration: 14, ease: "sine.inOut", repeat: -1, yoyo: true }, 1.8)
+        .to(arrow, { opacity: 0.35, duration: 1.8, ease: "sine.inOut", repeat: -1, yoyo: true }, 2.4);
+
+      let started = false;
+      const start = () => {
+        if (started) return;
+        started = true;
+        window.dispatchEvent(new Event(INTRO_EVENT));
+        tl.play();
+      };
+
+      // Begin once frames can actually play, so the reveal shows the image rather than a
+      // black box. On a slow network or with autoplay blocked, the poster carries the shot.
+      if (video.readyState >= 3) start();
+      video.addEventListener("canplay", start, { once: true });
+      const fallback = window.setTimeout(start, 2400);
+
+      return () => {
+        video.removeEventListener("canplay", start);
+        window.clearTimeout(fallback);
+      };
+    });
+
+    // Reduced motion: a still frame in a dark room. Visible states resolve in globals.css.
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      video.removeAttribute("autoplay");
+      video.pause();
+    });
+
+    // ---- Scroll --------------------------------------------------------------
+    mm.add(
+      { desktop: "(min-width: 768px)", motion: "(prefers-reduced-motion: no-preference)" },
+      (ctx) => {
+        const { desktop, motion } = ctx.conditions ?? {};
+        if (!motion) return;
+
+        if (desktop) {
+          // Pinned for one viewport of scroll: the image pushes in and dims, the headline slips
+          // upward, then the frame closes like a letterbox onto the section already waiting underneath.
+          gsap
+            .timeline({
+              defaults: { ease: "none" },
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: () => "+=" + section.offsetHeight,
+                scrub: 0.6,
+                pin: true,
+                pinSpacing: false,
+                anticipatePin: 1,
+              },
+            })
+            // Durations are fractions of the pinned scroll distance (1 = the full viewport of scroll).
+            .to(media, { scale: 1.1, duration: 1 }, 0)
+            .to(media, { opacity: 0.3, duration: 0.7, ease: "power1.in" }, 0.3)
+            .to(headline, { y: -32, opacity: 0, duration: 0.55, ease: "power1.in" }, 0)
+            .to(footer, { opacity: 0, duration: 0.3 }, 0)
+            .fromTo(
+              section,
+              { clipPath: "inset(0% 0% 0% 0%)" },
+              { clipPath: "inset(40% 0% 60% 0%)", duration: 1, ease: "power1.in" },
+              0,
+            );
+          return;
+        }
+
+        // Mobile: no pin, a lighter touch. The image pushes in and dims as the section scrolls off.
+        gsap
+          .timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: { trigger: section, start: "top top", end: "bottom top", scrub: 0.6 },
+          })
+          .to(media, { scale: 1.06, opacity: 0.35, duration: 1 }, 0)
+          .to(headline, { y: -24, opacity: 0, duration: 0.5 }, 0)
+          .to(footer, { opacity: 0, duration: 0.35 }, 0);
+      },
+    );
+
+    return () => {
+      cancelAnimationFrame(raf);
+      mm.revert();
+    };
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="hero">
+      <div ref={mediaRef} className="absolute inset-0 will-change-transform">
+        <video
+          ref={videoRef}
+          className="hero-video h-full w-full"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/video/hero/hero-alysano-poster.jpg"
+          data-cursor="play"
+          aria-hidden="true"
+          tabIndex={-1}
+          disablePictureInPicture
+          disableRemotePlayback
+        >
+          <source
+            src="/video/hero/hero-alysano-1080.mp4"
+            type="video/mp4"
+            media="(min-width: 768px)"
+          />
+          <source src="/video/hero/hero-alysano-720.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-6 md:px-10 md:pb-9">
+        <h1 ref={headlineRef} className="hero-headline font-sans font-medium uppercase text-ivory">
+          {HEADLINE.map((line) => (
+            <span key={line} data-line className="block">
+              {line}
+            </span>
+          ))}
+        </h1>
+
+        <div ref={footerRef} className="mt-10 md:mt-14">
+          <hr data-rule className="h-px origin-left border-0 bg-ivory/12" />
+          <div className="flex items-end justify-between gap-6 pt-4 font-mono text-[9px] uppercase leading-none tracking-[0.16em] md:pt-5 md:text-[10px]">
+            <div className="text-ivory/60">
+              <p data-intro>Based in Madagascar</p>
+              <p data-intro className="mt-2">
+                Selected work — 2026
+              </p>
+            </div>
+            <div className="text-right">
+              <p data-intro aria-hidden="true" className="hidden text-steel/70 md:block">
+                <span className="mr-2 text-muted">TC</span>
+                <span ref={tcRef}>00:00:00:00</span>
+              </p>
+              <p data-intro className="mt-2 flex items-center justify-end gap-2 text-ivory/60">
+                <span>Scroll to explore</span>
+                <svg
+                  data-arrow
+                  width="8"
+                  height="11"
+                  viewBox="0 0 8 11"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path d="M4 0v10M.75 6.75 4 10l3.25-3.25" stroke="currentColor" strokeWidth="1" />
+                </svg>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

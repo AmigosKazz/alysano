@@ -1,26 +1,191 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   Tokens — see CLAUDE.md. Roughly 90% dark / 8% neutral / 2% accent.
+------------------------------------------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #080a0c;
+  --ivory: #e8e6e1;
+  --muted: #7d858c;
+  --steel-blue: #8fa9b8;
+  --warm-gray: #b9a58a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-black: var(--black);
+  --color-ivory: var(--ivory);
+  --color-muted: var(--muted);
+  --color-steel: var(--steel-blue);
+  --color-warm: var(--warm-gray);
+
+  --font-sans: var(--font-display), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", ui-monospace, Menlo, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--black);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--black);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(143, 169, 184, 0.3);
+  color: var(--ivory);
+}
+
+/* ------------------------------------------------------------------
+   Site header — sits directly on the image. Gains a scrim only once
+   the opening shot is behind the visitor (toggled by ScrollTrigger).
+------------------------------------------------------------------ */
+.site-header {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 40;
+}
+
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -1.5rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 10, 12, 0.85) 0%,
+    rgba(8, 10, 12, 0.45) 60%,
+    rgba(8, 10, 12, 0) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.site-header.is-scrolled::before {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------
+   Hero — the opening shot.
+------------------------------------------------------------------ */
+.hero {
+  position: relative;
+  z-index: 10;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.hero-video {
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+
+.hero-headline {
+  font-size: clamp(2.5rem, 5.4vw, 6.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+}
+
+/* Keeps the type legible without burying the image. */
+.hero-vignette {
+  background:
+    linear-gradient(to top, rgba(8, 10, 12, 0.7) 0%, rgba(8, 10, 12, 0.24) 30%, rgba(8, 10, 12, 0) 55%),
+    linear-gradient(to bottom, rgba(8, 10, 12, 0.4) 0%, rgba(8, 10, 12, 0) 22%),
+    radial-gradient(60% 45% at 0% 100%, rgba(8, 10, 12, 0.45) 0%, rgba(8, 10, 12, 0) 100%),
+    radial-gradient(120% 100% at 50% 45%, rgba(8, 10, 12, 0) 50%, rgba(8, 10, 12, 0.4) 100%);
+}
+
+/* Opening states. Applied only once JS is confirmed running, so a
+   no-JS visit still gets the content; GSAP animates out of these. */
+.js .hero-video,
+.js .hero [data-intro],
+.js .site-header [data-intro] {
+  opacity: 0;
+}
+
+.js .hero [data-line] {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(20px);
+}
+
+.js .site-header [data-clip] {
+  clip-path: inset(0 0 100% 0);
+}
+
+.js .hero [data-rule] {
+  transform: scaleX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .hero-video,
+  .js .hero [data-intro],
+  .js .site-header [data-intro] {
+    opacity: 1;
+  }
+
+  .js .hero [data-line],
+  .js .site-header [data-clip],
+  .js .hero [data-rule] {
+    clip-path: none;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Cursor — desktop only; <Cursor /> activates it for fine pointers.
+------------------------------------------------------------------ */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+.cursor-dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ivory);
+}
+
+.cursor-ring {
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(232, 230, 225, 0.55);
+  border-radius: 50%;
+}
+
+.cursor-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  opacity: 0;
+}
+
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button,
+html.has-cursor video {
+  cursor: none;
 }
