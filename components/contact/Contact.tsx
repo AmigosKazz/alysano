@@ -15,7 +15,7 @@ const FRAMES = Array.from(
 );
 
 /** Pointer travel between two frames. Lower drops more film on the floor. */
-const SPACING = 112;
+const SPACING = 88;
 
 /**
  * The last room. One line, held in the middle of an empty screen, and a trail of
@@ -114,7 +114,7 @@ export function Contact() {
             src={src}
             alt=""
             width={520}
-            height={293}
+            height={390}
             className="contact-frame"
           />
         ))}
