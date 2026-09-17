@@ -6,17 +6,20 @@ import { gsap } from "gsap";
 const INTERACTIVE = "a, button, [data-cursor]";
 
 /**
- * A point. Over anything interactive a quiet reticle opens around it.
+ * A point. Over anything interactive a quiet reticle opens around it; an element
+ * carrying `data-cursor="…"` swaps that for a small caption of its own instead.
  * Fine pointers only — touch keeps the native behaviour.
  */
 export function Cursor() {
   const rootRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLSpanElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
     const ring = ringRef.current;
-    if (!root || !ring) return;
+    const label = labelRef.current;
+    if (!root || !ring || !label) return;
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     document.documentElement.classList.add("has-cursor");
@@ -26,7 +29,7 @@ export function Cursor() {
     const moveY = gsap.quickTo(root, "y", { duration: 0.14, ease: "power3" });
 
     let visible = false;
-    let active = false;
+    let mode = "";
 
     const onMove = (event: PointerEvent) => {
       if (!visible) {
@@ -39,12 +42,23 @@ export function Cursor() {
     };
 
     const onOver = (event: Event) => {
-      const next = Boolean((event.target as Element | null)?.closest(INTERACTIVE));
-      if (next === active) return;
-      active = next;
+      const target = event.target as Element | null;
+      const named = target?.closest<HTMLElement>("[data-cursor]")?.dataset.cursor ?? "";
+      const interactive = Boolean(target?.closest(INTERACTIVE));
+      const next = named || (interactive ? "ring" : "");
+      if (next === mode) return;
+      mode = next;
+
+      if (named) label.textContent = named;
+      gsap.to(label, {
+        opacity: named ? 1 : 0,
+        duration: named ? 0.3 : 0.2,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
       gsap.to(ring, {
-        scale: next ? 1 : 0.4,
-        opacity: next ? 1 : 0,
+        scale: next && !named ? 1 : 0.4,
+        opacity: next && !named ? 1 : 0,
         duration: next ? 0.45 : 0.3,
         ease: "power3.out",
         overwrite: "auto",
@@ -72,6 +86,7 @@ export function Cursor() {
     <div ref={rootRef} className="cursor" aria-hidden="true">
       <span className="cursor-dot" />
       <span ref={ringRef} className="cursor-ring" />
+      <span ref={labelRef} className="cursor-label" />
     </div>
   );
 }

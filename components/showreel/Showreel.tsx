@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { gsap } from "gsap";
+import { INTRO_EVENT } from "@/lib/intro";
 
 const PREVIEW = "/video/showreel/showreel-preview.mp4";
 const FULL = "/video/showreel/showreel-1080.mp4";
@@ -19,16 +20,21 @@ export function Showreel() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const previewRef = useRef<HTMLVideoElement>(null);
 
-  // The preview is inert until approached — no bytes fetched for visitors who never hover.
-  const warm = useCallback(() => {
+  // The preview runs from the start, but only once the opening sequence has fired — the
+  // hero video gets the bandwidth it needs first.
+  useEffect(() => {
     const video = previewRef.current;
     if (!video) return;
-    if (!video.src) video.src = PREVIEW;
-    video.play().catch(() => {});
-  }, []);
 
-  const cool = useCallback(() => {
-    previewRef.current?.pause();
+    const play = () => video.play().catch(() => {});
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    window.addEventListener(INTRO_EVENT, play, { once: true });
+    const fallback = window.setTimeout(play, 2600);
+    return () => {
+      window.removeEventListener(INTRO_EVENT, play);
+      window.clearTimeout(fallback);
+    };
   }, []);
 
   const close = useCallback(() => {
@@ -42,32 +48,33 @@ export function Showreel() {
         ref={triggerRef}
         type="button"
         className="showreel-trigger"
-        onPointerEnter={warm}
-        onPointerLeave={cool}
-        onFocus={warm}
-        onBlur={cool}
+        data-cursor="Play"
+        aria-label="Play showreel"
         onClick={(event) => setOrigin(event.currentTarget.getBoundingClientRect())}
       >
         <span className="showreel-preview" aria-hidden="true">
           <video
             ref={previewRef}
+            src={PREVIEW}
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             poster={POSTER}
             tabIndex={-1}
             disablePictureInPicture
             disableRemotePlayback
           />
         </span>
-        <span className="showreel-label font-mono">
-          <span>Showreel</span>
-          <svg width="7" height="8" viewBox="0 0 7 8" fill="currentColor" aria-hidden="true">
-            <path d="M0 0v8l7-4z" />
-          </svg>
+        <span className="showreel-meta" aria-hidden="true">
+          <span className="showreel-label font-mono">
+            <span>Showreel</span>
+            <svg width="7" height="8" viewBox="0 0 7 8" fill="currentColor" aria-hidden="true">
+              <path d="M0 0v8l7-4z" />
+            </svg>
+          </span>
+          <span className="showreel-rule" />
         </span>
-        <span className="showreel-rule" aria-hidden="true" />
       </button>
 
       {origin ? createPortal(<Player origin={origin} onClose={close} />, document.body) : null}

@@ -85,7 +85,6 @@ export function SiteHeader() {
         <Link
           href="/"
           className="pointer-events-auto block min-w-0"
-          data-cursor="open"
           aria-label="Aly Sanoo — home"
         >
           <span
@@ -108,7 +107,6 @@ export function SiteHeader() {
               <li key={item.href} data-intro>
                 <a
                   href={item.href}
-                  data-cursor="open"
                   className="nav-link font-mono text-[10px] uppercase tracking-[0.18em] md:text-[11px]"
                 >
                   <span>{item.label}</span>
@@ -116,7 +114,7 @@ export function SiteHeader() {
               </li>
             ))}
             <li data-intro className="ml-1 md:ml-4">
-              <a href="#contact" className="nav-cta" data-cursor="open" aria-label="Contact">
+              <a href="#contact" className="nav-cta" aria-label="Contact">
                 <span className="nav-cta-frame">
                   <i className="nav-cta-corners" aria-hidden="true" />
                   <span
