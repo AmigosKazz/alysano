@@ -113,7 +113,15 @@ export function Hero() {
             .to(media, { scale: 1.1, duration: 1 }, 0)
             .to(media, { opacity: 0.3, duration: 0.7, ease: "power1.in" }, 0.3)
             .to(headline, { y: -32, opacity: 0, duration: 0.55, ease: "power1.in" }, 0)
-            .to(meta(), { opacity: 0, duration: 0.3 }, 0)
+            // Declared from 1 explicitly: a plain .to() would record the start value when the
+            // scrub timeline first renders, which happens while the intro still has these
+            // hidden at opacity 0 — scrolling back would then restore them to 0, not 1.
+            .fromTo(
+              meta(),
+              { opacity: 1 },
+              { opacity: 0, duration: 0.3, immediateRender: false },
+              0,
+            )
             .fromTo(
               section,
               { clipPath: "inset(0% 0% 0% 0%)" },
@@ -131,7 +139,7 @@ export function Hero() {
           })
           .to(media, { scale: 1.06, opacity: 0.35, duration: 1 }, 0)
           .to(headline, { y: -24, opacity: 0, duration: 0.5 }, 0)
-          .to(meta(), { opacity: 0, duration: 0.35 }, 0);
+          .fromTo(meta(), { opacity: 1 }, { opacity: 0, duration: 0.35, immediateRender: false }, 0);
       },
     );
 
