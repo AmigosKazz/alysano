@@ -1621,6 +1621,87 @@ body {
 }
 
 /* ------------------------------------------------------------------
+   Contact — the last room. One line held in the middle of an empty
+   screen, and a trail of frames the pointer drags out behind it. The
+   trail runs over the type, not under it: the reel comes apart across
+   the invitation.
+------------------------------------------------------------------ */
+.contact {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 12svh 1.25rem;
+}
+
+.contact-trail {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.contact-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(150px, 15vw, 240px);
+  height: auto;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.contact-statement {
+  position: relative;
+  z-index: 1;
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: clamp(3.25rem, 9.6vw, 9.5rem);
+  line-height: 0.88;
+  letter-spacing: 0.01em;
+  color: var(--ivory);
+}
+
+/* Padded so the descenders survive, then pulled back so the row is the line box. */
+.contact-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.contact-line {
+  display: block;
+  will-change: transform;
+  transition: opacity 0.5s ease;
+}
+
+.js .contact [data-line] {
+  transform: translateY(108%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .contact [data-line] {
+    transform: none;
+  }
+}
+
+/* The statement is the only thing on screen, so the approach is read on the
+   line itself: the rest of the block steps back and the hovered line holds. */
+@media (hover: hover) and (pointer: fine) {
+  .contact-statement:hover .contact-line {
+    opacity: 0.45;
+  }
+
+  .contact-statement .contact-line:hover {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
    Cursor — a point that draws where it has just been. Difference blend
    so it survives the bright frames as well as the black.
 ------------------------------------------------------------------ */
