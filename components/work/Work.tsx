@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,13 +11,21 @@ type Project = {
   line: string;
   /** Column weight in the five-column band — the two sizes alternate per row. */
   span: 3 | 2;
+  /** Plays on loop from the start, no pointer needed — the other tiles still wait for hover. */
+  autoplay?: boolean;
 };
 
 // Titles are working titles on the supplied footage; swap them for the real ones.
 const PROJECTS: Project[] = [
   { slug: "work-01", title: "Night Parade", line: "Music video — edit, sound design", span: 3 },
-  { slug: "work-02", title: "Plumage", line: "Music video — edit", span: 2 },
-  { slug: "work-03", title: "Stairwell", line: "Music video — edit, sound design", span: 2 },
+  { slug: "work-02", title: "Plumage", line: "Music video — edit", span: 2, autoplay: true },
+  {
+    slug: "work-03",
+    title: "Stairwell",
+    line: "Music video — edit, sound design",
+    span: 2,
+    autoplay: true,
+  },
   { slug: "work-04", title: "Nocturne", line: "Commercial — edit, post", span: 3 },
 ];
 
@@ -64,10 +72,33 @@ export function Work() {
     return () => mm.revert();
   }, []);
 
+  // The autoplay tiles run as soon as they can, independent of any pointer. The `autoPlay`
+  // attribute alone would ignore prefers-reduced-motion, so reduced motion strips it and
+  // leaves the poster — the same split the hero and showreel make.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const videos = section.querySelectorAll<HTMLVideoElement>("[data-autoplay] video");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      videos.forEach((video) => {
+        video.removeAttribute("autoplay");
+        video.pause();
+      });
+      return;
+    }
+
+    videos.forEach((video) => video.play().catch(() => {}));
+  }, []);
+
   // The preview runs from its first frame on every approach, not from wherever it was
   // left, so the same opening beat plays each time — and returns to the poster after.
+  // Autoplay tiles are already running on loop, so hover has nothing to add here.
+  //
+  // `data-autoplay` is set to "" (present, no value) — an empty string is falsy, so this
+  // has to test for the attribute's presence, not truthiness of its value.
   const play = (event: React.PointerEvent<HTMLAnchorElement>) => {
-    if (!canHover()) return;
+    if (!canHover() || "autoplay" in event.currentTarget.dataset) return;
     const video = event.currentTarget.querySelector("video");
     if (!video) return;
     video.currentTime = 0;
@@ -75,6 +106,7 @@ export function Work() {
   };
 
   const halt = (event: React.PointerEvent<HTMLAnchorElement>) => {
+    if ("autoplay" in event.currentTarget.dataset) return;
     const video = event.currentTarget.querySelector("video");
     if (!video) return;
     video.pause();
@@ -112,6 +144,7 @@ export function Work() {
             <Link
               key={project.slug}
               data-tile
+              data-autoplay={project.autoplay ? "" : undefined}
               href={`/work/${project.slug}`}
               className="work-tile"
               data-span={project.span}
@@ -124,10 +157,11 @@ export function Work() {
                   className="work-video"
                   src={`/video/works/web/${project.slug}.mp4`}
                   poster={`/video/works/web/${project.slug}.jpg`}
+                  autoPlay={project.autoplay}
                   muted
                   loop
                   playsInline
-                  preload="none"
+                  preload={project.autoplay ? "auto" : "none"}
                   tabIndex={-1}
                   aria-hidden="true"
                   disablePictureInPicture
