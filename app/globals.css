@@ -73,6 +73,223 @@ body {
 }
 
 /* ------------------------------------------------------------------
+   Navigation — text links carry a small accent dot on approach; the
+   CONTACT call sits in camera framing marks beside a solid accent square.
+------------------------------------------------------------------ */
+.nav-link {
+  position: relative;
+  display: inline-block;
+  color: rgba(232, 230, 225, 0.7);
+  transition: color 0.35s ease;
+}
+
+.nav-link:hover {
+  color: var(--ivory);
+}
+
+.nav-link > span {
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover > span {
+  transform: translateX(11px);
+}
+
+.nav-link::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: var(--steel-blue);
+  opacity: 0;
+  transform: scale(0.2);
+  transition:
+    opacity 0.35s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.nav-cta-frame {
+  position: relative;
+  display: none;
+  place-items: center;
+  height: 34px;
+  padding: 0 20px;
+  border: 1px solid rgba(232, 230, 225, 0.14);
+  background: rgba(232, 230, 225, 0.03);
+  transition: background-color 0.4s ease;
+}
+
+.nav-cta:hover .nav-cta-frame {
+  background: rgba(232, 230, 225, 0.07);
+}
+
+/* Out of flow: as a grid item this empty mark would claim a row and shove the label off centre. */
+.nav-cta-corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Four corner brackets: the frame draws one diagonal pair, the inner mark the other. */
+.nav-cta-frame::before,
+.nav-cta-frame::after,
+.nav-cta-corners::before,
+.nav-cta-corners::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-color: rgba(232, 230, 225, 0.55);
+  border-style: solid;
+  border-width: 0;
+  transition: border-color 0.4s ease;
+}
+
+.nav-cta-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.nav-cta-frame::after {
+  right: -1px;
+  bottom: -1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.nav-cta-corners::before {
+  top: -1px;
+  right: -1px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.nav-cta-corners::after {
+  bottom: -1px;
+  left: -1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.nav-cta:hover .nav-cta-frame::before,
+.nav-cta:hover .nav-cta-frame::after,
+.nav-cta:hover .nav-cta-corners::before,
+.nav-cta:hover .nav-cta-corners::after {
+  border-color: var(--ivory);
+}
+
+/* Label rolls up, its double follows from below. */
+.nav-cta-roll {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 1em;
+}
+
+.nav-cta-roll > span {
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-cta-roll > span + span {
+  position: absolute;
+  inset: 0;
+  transform: translateY(100%);
+}
+
+.nav-cta:hover .nav-cta-roll > span {
+  transform: translateY(-100%);
+}
+
+.nav-cta:hover .nav-cta-roll > span + span {
+  transform: translateY(0);
+}
+
+/* The accent square — the only saturated surface on the page. */
+.nav-cta-arrow {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  color: var(--black);
+  background: var(--steel-blue);
+  transition: background-color 0.4s ease;
+}
+
+.nav-cta:hover .nav-cta-arrow {
+  background: #a5bcc8;
+}
+
+.nav-cta-arrow svg {
+  grid-area: 1 / 1;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-cta-arrow svg + svg {
+  transform: translate(-260%, 260%);
+}
+
+.nav-cta:hover .nav-cta-arrow svg {
+  transform: translate(260%, -260%);
+}
+
+.nav-cta:hover .nav-cta-arrow svg + svg {
+  transform: translate(0, 0);
+}
+
+@media (min-width: 768px) {
+  .nav-cta-frame {
+    display: grid;
+    height: 36px;
+  }
+
+  .nav-cta-arrow {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link > span,
+  .nav-cta-roll > span,
+  .nav-cta-arrow svg {
+    transition: none;
+  }
+
+  .nav-link:hover > span,
+  .nav-cta:hover .nav-cta-roll > span,
+  .nav-cta:hover .nav-cta-arrow svg {
+    transform: none;
+  }
+
+  .nav-cta-roll > span + span,
+  .nav-cta-arrow svg + svg {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------
    Hero — the opening shot.
 ------------------------------------------------------------------ */
 .hero {

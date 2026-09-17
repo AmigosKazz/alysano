@@ -9,8 +9,21 @@ import { INTRO_EVENT } from "@/lib/intro";
 const NAV = [
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
 ];
+
+/** Drawn twice inside the accent square so one can roll out as the other arrives. */
+function Arrow() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path
+        d="M2.6 9.4 9.4 2.6M4.3 2.6h5.1v5.1"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+}
 
 export function SiteHeader() {
   const ref = useRef<HTMLElement>(null);
@@ -90,18 +103,36 @@ export function SiteHeader() {
         </Link>
 
         <nav aria-label="Primary" className="pointer-events-auto shrink-0">
-          <ul className="flex gap-5 md:gap-8">
+          <ul className="flex items-center gap-5 md:gap-8">
             {NAV.map((item) => (
               <li key={item.href} data-intro>
                 <a
                   href={item.href}
                   data-cursor="open"
-                  className="font-mono text-[10px] uppercase tracking-[0.18em] text-ivory/70 transition-colors duration-300 hover:text-ivory md:text-[11px]"
+                  className="nav-link font-mono text-[10px] uppercase tracking-[0.18em] md:text-[11px]"
                 >
-                  {item.label}
+                  <span>{item.label}</span>
                 </a>
               </li>
             ))}
+            <li data-intro className="ml-1 md:ml-4">
+              <a href="#contact" className="nav-cta" data-cursor="open" aria-label="Contact">
+                <span className="nav-cta-frame">
+                  <i className="nav-cta-corners" aria-hidden="true" />
+                  <span
+                    className="nav-cta-roll font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-ivory md:text-[11px]"
+                    aria-hidden="true"
+                  >
+                    <span>Contact</span>
+                    <span>Contact</span>
+                  </span>
+                </span>
+                <span className="nav-cta-arrow">
+                  <Arrow />
+                  <Arrow />
+                </span>
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
