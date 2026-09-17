@@ -82,7 +82,7 @@ export function Work() {
           </p>
 
           <p data-lead className="work-lead">
-            A short look at what the edit made — films, campaigns and music work, shaped
+            A short look at what the edit made films, campaigns and music work, shaped
             frame by frame.
           </p>
 

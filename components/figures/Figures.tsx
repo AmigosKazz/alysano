@@ -131,15 +131,22 @@ export function Figures() {
           Key figures
         </p>
 
+        {/* Rows are real elements, not just grid lines: a card widens against the two
+            beside it and nothing in the other row moves. On phones the rows dissolve
+            and the cards fall into a plain two-column grid. */}
         <div className="figures-grid">
-          {FIGURES.map((figure, i) => (
-            <div key={figure.label} className="fig-card">
-              <span className="fig-index font-mono">{i + 1}.</span>
-              <p className="fig-number">
-                <span className="sr-only">{figure.value}</span>
-                <Value value={figure.value} />
-              </p>
-              <span className="fig-label">{figure.label}</span>
+          {[FIGURES.slice(0, 3), FIGURES.slice(3)].map((row, r) => (
+            <div key={r} className="figures-row">
+              {row.map((figure, i) => (
+                <div key={figure.label} className="fig-card">
+                  <span className="fig-index font-mono">{r * 3 + i + 1}.</span>
+                  <p className="fig-number">
+                    <span className="sr-only">{figure.value}</span>
+                    <Value value={figure.value} />
+                  </p>
+                  <span className="fig-label">{figure.label}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>

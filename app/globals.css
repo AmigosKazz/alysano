@@ -692,8 +692,8 @@ body {
 }
 
 .work-lead {
-  max-width: 34ch;
-  font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  max-width: 30ch;
+  font-size: clamp(1.0625rem, 2vw, 1.7125rem);
   line-height: 1.5;
   color: rgba(232, 230, 225, 0.82);
 }
@@ -1003,13 +1003,16 @@ body {
   margin-top: 2rem;
 }
 
+.figures-row {
+  display: contents;
+}
+
 .fig-card {
   display: flex;
   flex-direction: column;
   min-height: clamp(128px, 26vw, 200px);
   padding: 0.9rem 1rem;
   background: #101316;
-  transition: background-color 0.45s ease;
 }
 
 .fig-index {
@@ -1041,10 +1044,6 @@ body {
 }
 
 @media (hover: hover) {
-  .fig-card:hover {
-    background: #050607;
-  }
-
   .fig-card:hover .fig-number,
   .fig-card:hover .fig-label {
     color: var(--ivory);
@@ -1104,7 +1103,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fig-card,
   .fig-number,
   .fig-label {
     transition: none;
@@ -1117,13 +1115,36 @@ body {
   }
 
   .figures-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 12px;
     margin-top: 2.5rem;
   }
 
+  .figures-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  /* Basis zero, so the three cards land in the ratio of their grow factors and
+     nothing else: at rest 1:1:1, and 1.2:1:1 while one is under the pointer. */
   .fig-card {
+    flex: 1 1 0;
+    min-width: 0;
     padding: 1.1rem 1.3rem 1.2rem;
+    transition: flex-grow 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
+
+@media (min-width: 900px) and (hover: hover) {
+  .fig-card:hover {
+    flex-grow: 1.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fig-card {
+    transition: none;
   }
 }
 
