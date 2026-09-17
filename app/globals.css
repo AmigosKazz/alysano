@@ -18,7 +18,8 @@
   --color-steel: var(--steel-blue);
   --color-warm: var(--warm-gray);
 
-  --font-sans: var(--font-display), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-manrope), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-title: var(--font-bebas), "Arial Narrow", Impact, sans-serif;
   --font-mono: var(--font-geist-mono), "SF Mono", ui-monospace, Menlo, monospace;
 }
 
@@ -88,9 +89,9 @@ body {
 }
 
 .hero-headline {
-  font-size: clamp(2.5rem, 5.4vw, 6.5rem);
-  line-height: 0.94;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.75rem, 5.8vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: 0.005em;
 }
 
 /* Keeps the type legible without burying the image. */

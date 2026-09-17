@@ -77,7 +77,7 @@ export function SiteHeader() {
         >
           <span
             data-clip
-            className="block font-sans text-[12px] font-medium uppercase tracking-[0.22em] text-ivory md:text-[13px]"
+            className="block font-title text-[15px] uppercase tracking-[0.12em] text-ivory md:text-base"
           >
             Aly Sanoo
           </span>

@@ -196,44 +196,13 @@ export function Hero() {
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-6 md:px-10 md:pb-9">
-        <h1 ref={headlineRef} className="hero-headline font-sans font-medium uppercase text-ivory">
+        <h1 ref={headlineRef} className="hero-headline font-title uppercase text-ivory">
           {HEADLINE.map((line) => (
             <span key={line} data-line className="block">
               {line}
             </span>
           ))}
         </h1>
-
-        <div ref={footerRef} className="mt-10 md:mt-14">
-          <hr data-rule className="h-px origin-left border-0 bg-ivory/12" />
-          <div className="flex items-end justify-between gap-6 pt-4 font-mono text-[9px] uppercase leading-none tracking-[0.16em] md:pt-5 md:text-[10px]">
-            <div className="text-ivory/60">
-              <p data-intro>Based in Madagascar</p>
-              <p data-intro className="mt-2">
-                Selected work — 2026
-              </p>
-            </div>
-            <div className="text-right">
-              <p data-intro aria-hidden="true" className="hidden text-steel/70 md:block">
-                <span className="mr-2 text-muted">TC</span>
-                <span ref={tcRef}>00:00:00:00</span>
-              </p>
-              <p data-intro className="mt-2 flex items-center justify-end gap-2 text-ivory/60">
-                <span>Scroll to explore</span>
-                <svg
-                  data-arrow
-                  width="8"
-                  height="11"
-                  viewBox="0 0 8 11"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d="M4 0v10M.75 6.75 4 10l3.25-3.25" stroke="currentColor" strokeWidth="1" />
-                </svg>
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

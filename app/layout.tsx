@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Instrument_Sans } from "next/font/google";
+import { Bebas_Neue, Geist_Mono, Manrope } from "next/font/google";
 import { Cursor } from "@/components/cursor/Cursor";
 import { SiteHeader } from "@/components/site-header/SiteHeader";
 import "./globals.css";
 
-const display = Instrument_Sans({
+// Title face — headline and wordmark only. Single weight (400); Google ships no other cut.
+const title = Bebas_Neue({
   subsets: ["latin"],
-  variable: "--font-display",
+  weight: "400",
+  variable: "--font-bebas",
+  display: "swap",
+});
+
+const body = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
   display: "swap",
 });
 
@@ -31,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${mono.variable} h-full antialiased`}
+      className={`${title.variable} ${body.variable} ${mono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">
