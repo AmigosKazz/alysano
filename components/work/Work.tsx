@@ -42,21 +42,23 @@ export function Work() {
           defaults: { ease: "power3.out" },
           scrollTrigger: { trigger: section, start: "top 68%" },
         })
-        .fromTo("[data-aside]", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12 }, 0)
-        // Each frame is uncovered from the top edge down while the image inside settles
-        // back from a wider crop — the cut, not a fade.
+        .fromTo("[data-kicker]", { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.9 }, 0)
+        .fromTo(
+          "[data-lead]",
+          { clipPath: "inset(0% 0% 100% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: 1.1 },
+          0.15,
+        )
+        // Each frame opens from a point at its centre out to full size. The image behind
+        // it never moves or scales — the aperture widens onto a picture already there.
         .fromTo(
           "[data-tile]",
-          { clipPath: "inset(0% 0% 100% 0%)" },
-          { clipPath: "inset(0% 0% 0% 0%)", duration: 1.25, stagger: 0.09 },
+          { clipPath: "inset(50% 50% 50% 50%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: 1.35, stagger: 0.1 },
           0.1,
         )
-        .fromTo(
-          "[data-plate]",
-          { scale: 1.22 },
-          { scale: 1, duration: 1.7, stagger: 0.09, ease: "power4.out" },
-          0.1,
-        );
+        // The way out arrives once there is something to leave.
+        .fromTo("[data-cta]", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.9 }, 0.95);
     });
 
     return () => mm.revert();
@@ -75,16 +77,16 @@ export function Work() {
     <section ref={sectionRef} id="work" className="work">
       <div className="work-inner">
         <div className="work-aside">
-          <p data-aside className="work-kicker font-mono">
+          <p data-kicker className="work-kicker font-mono">
             Selected projects
           </p>
 
-          <p data-aside className="work-lead">
+          <p data-lead className="work-lead">
             A short look at what the edit made — films, campaigns and music work, shaped
             frame by frame.
           </p>
 
-          <Link data-aside href="/work" className="work-all font-mono">
+          <Link data-cta href="/work" className="work-all font-mono">
             <span>See all work</span>
             <svg width="13" height="9" viewBox="0 0 13 9" fill="none" aria-hidden="true">
               <path

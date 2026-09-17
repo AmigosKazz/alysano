@@ -1,4 +1,5 @@
 import { Behind } from "@/components/behind/Behind";
+import { Figures } from "@/components/figures/Figures";
 import { Hero } from "@/components/hero/Hero";
 import { Work } from "@/components/work/Work";
 
@@ -11,6 +12,7 @@ export default function Home() {
       <div className="page-cover">
         <Behind />
         <Work />
+        <Figures />
       </div>
     </main>
   );
