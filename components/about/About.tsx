@@ -6,7 +6,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Cta } from "@/components/ui/Cta";
 
-/*** The only place the person, rather than the work, is in view: a frame from the
+/**
+ * The only place the person, rather than the work, is in view: a frame from the
  * floor, on set, behind the camera. The text column holds the same height as the
  * picture — label at the top, statement at eye level, the way out at the bottom.
  * A teaser: the rest lives on /about.
@@ -40,10 +41,12 @@ export function About() {
           0,
         )
         // Each block rises as a whole, so the measure stays intact at any width.
+        // `y: 0` is pinned on both ends: without it the CSS pre-state's percentage
+        // translate survives as pixels and the block stays clipped by its mask.
         .fromTo(
           "[data-block]",
-          { yPercent: 105 },
-          { yPercent: 0, duration: 1.2, stagger: 0.12, ease: "expo.out" },
+          { yPercent: 105, y: 0 },
+          { yPercent: 0, y: 0, duration: 1.2, stagger: 0.12, ease: "expo.out" },
           0.25,
         )
         .fromTo(
