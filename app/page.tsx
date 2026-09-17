@@ -1,3 +1,4 @@
+import { About } from "@/components/about/About";
 import { Behind } from "@/components/behind/Behind";
 import { Figures } from "@/components/figures/Figures";
 import { Hero } from "@/components/hero/Hero";
@@ -15,6 +16,7 @@ export default function Home() {
         <Work />
         <Figures />
         <Services />
+        <About />
       </div>
     </main>
   );

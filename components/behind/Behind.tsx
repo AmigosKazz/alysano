@@ -52,7 +52,7 @@ export function Behind() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="about" className="behind">
+    <section ref={sectionRef} id="behind" className="behind">
       <div className="behind-inner">
         <p data-eyebrow className="behind-eyebrow font-mono">
           Behind the work

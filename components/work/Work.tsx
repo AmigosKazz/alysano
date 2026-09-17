@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Cta } from "@/components/ui/Cta";
 
 type Project = {
   slug: string;
@@ -28,20 +29,6 @@ const PROJECTS: Project[] = [
   },
   { slug: "work-04", title: "Nocturne", line: "Commercial — edit, post", span: 3 },
 ];
-
-/** Drawn twice inside the accent square so one can roll out as the other arrives. */
-function Arrow() {
-  return (
-    <svg width="13" height="9" viewBox="0 0 13 9" fill="none" aria-hidden="true">
-      <path
-        d="M0 4.5h11M8 1l3.5 3.5L8 8"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="square"
-      />
-    </svg>
-  );
-}
 
 /** Previews are only worth their bandwidth where there is a pointer to hover with. */
 const canHover = () =>
@@ -140,13 +127,7 @@ export function Work() {
             frame by frame.
           </p>
 
-          <Link data-cta href="/work" className="work-all font-mono">
-            <span className="work-all-label">See all work</span>
-            <span className="work-all-arrow" aria-hidden="true">
-              <Arrow />
-              <Arrow />
-            </span>
-          </Link>
+          <Cta data-cta href="/work" label="See all work" />
         </div>
 
         <div className="work-grid">

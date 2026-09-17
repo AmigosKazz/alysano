@@ -669,7 +669,8 @@ body {
   order: 1;
 }
 
-.work-all {
+/* Ordering belongs to this grid, not to the button itself. */
+.work-inner .cta {
   order: 2;
 }
 
@@ -700,7 +701,7 @@ body {
 
 /* Carries the header's accent: the label sits in steel blue and the arrow in the
    same solid square as the CONTACT call, so the two real actions on the page match. */
-.work-all {
+.cta {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
@@ -712,18 +713,18 @@ body {
   transition: color 0.4s ease;
 }
 
-.work-all:hover,
-.work-all:focus-visible {
+.cta:hover,
+.cta:focus-visible {
   color: #a5bcc8;
 }
 
-.work-all-label {
+.cta-label {
   position: relative;
 }
 
 /* The rule draws itself out from the left on approach. Floated below the label
    rather than padding it, so the label stays optically centred on the square. */
-.work-all-label::after {
+.cta-label::after {
   content: "";
   position: absolute;
   right: 0;
@@ -738,13 +739,13 @@ body {
     background-color 0.4s ease;
 }
 
-.work-all:hover .work-all-label::after,
-.work-all:focus-visible .work-all-label::after {
+.cta:hover .cta-label::after,
+.cta:focus-visible .cta-label::after {
   transform: scaleX(1);
   background: var(--steel-blue);
 }
 
-.work-all-arrow {
+.cta-arrow {
   position: relative;
   display: grid;
   place-items: center;
@@ -757,28 +758,28 @@ body {
   transition: background-color 0.4s ease;
 }
 
-.work-all:hover .work-all-arrow,
-.work-all:focus-visible .work-all-arrow {
+.cta:hover .cta-arrow,
+.cta:focus-visible .cta-arrow {
   background: #a5bcc8;
 }
 
 /* Drawn twice so one can leave to the right as its double arrives from the left. */
-.work-all-arrow svg {
+.cta-arrow svg {
   grid-area: 1 / 1;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.work-all-arrow svg + svg {
+.cta-arrow svg + svg {
   transform: translateX(-210%);
 }
 
-.work-all:hover .work-all-arrow svg,
-.work-all:focus-visible .work-all-arrow svg {
+.cta:hover .cta-arrow svg,
+.cta:focus-visible .cta-arrow svg {
   transform: translateX(210%);
 }
 
-.work-all:hover .work-all-arrow svg + svg,
-.work-all:focus-visible .work-all-arrow svg + svg {
+.cta:hover .cta-arrow svg + svg,
+.cta:focus-visible .cta-arrow svg + svg {
   transform: translateX(0);
 }
 
@@ -935,15 +936,15 @@ body {
   .work-video,
   .work-scrim,
   .work-meta,
-  .work-all,
-  .work-all-label::after,
-  .work-all-arrow,
-  .work-all-arrow svg {
+  .cta,
+  .cta-label::after,
+  .cta-arrow,
+  .cta-arrow svg {
     transition: none;
   }
 
   /* The second arrow only exists to roll in; with no roll it would sit stacked. */
-  .work-all-arrow svg + svg {
+  .cta-arrow svg + svg {
     opacity: 0;
   }
 
@@ -978,7 +979,7 @@ body {
     margin: auto 0;
   }
 
-  .work-all {
+  .work-inner .cta {
     order: 0;
     align-self: flex-end;
   }
@@ -1451,44 +1452,244 @@ body {
 }
 
 /* ------------------------------------------------------------------
-   Cursor — a point. Over anything interactive a quiet reticle opens
-   around it; elements that name themselves get a small caption instead.
+   About — a teaser, and the one warm frame on the site. The type sits
+   left and bottom-aligned against the picture so the air collects at
+   the top; the subject looks left, into the words, not off the edge.
 ------------------------------------------------------------------ */
-.cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  mix-blend-mode: difference;
-  will-change: transform;
+.about {
+  position: relative;
+  padding: 7rem 1.25rem 8rem;
 }
 
-.cursor-dot {
-  position: absolute;
-  top: -2.5px;
-  left: -2.5px;
+.about-inner {
+  display: grid;
+  gap: 3rem;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+.about-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.62);
+}
+
+.about-kicker::before {
+  content: "";
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--ivory);
 }
 
-.cursor-ring {
+.about-title {
+  font-size: clamp(1.9rem, 8.4vw, 3rem);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ivory);
+}
+
+/* Padded so the descenders survive, then pulled back so the row is the line box. */
+.about-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.about-line {
+  display: block;
+  will-change: transform;
+}
+
+.about-lead {
+  margin-top: 1.75rem;
+  max-width: 46ch;
+  font-size: clamp(1rem, 2.1vw, 1.125rem);
+  line-height: 1.6;
+  color: rgba(232, 230, 225, 0.68);
+}
+
+.about-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 2rem;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.about-meta > span:first-child {
+  color: var(--ivory);
+}
+
+.about-meta > span + span {
+  color: rgba(232, 230, 225, 0.4);
+}
+
+.about-action {
+  display: block;
+  margin-top: 2.5rem;
+}
+
+/* ---- The frame ---- */
+.about-frame {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 730 / 912;
+  background: #0b0e11;
+}
+
+/* Taller than the frame so it can drift without opening an edge. */
+.about-photo {
   position: absolute;
-  top: -17px;
-  left: -17px;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(232, 230, 225, 0.6);
+  inset: -6% 0;
+  will-change: transform;
+}
+
+.about-photo img {
+  object-fit: cover;
+}
+
+/* The cold pass. `color` blend takes the hue and saturation from this flat
+   blue-grey and leaves the photograph's own luminance, so the frame reads
+   monochrome until the tween lifts it off and the gold comes back. */
+.about-grade {
+  position: absolute;
+  inset: 0;
+  background: #223039;
+  mix-blend-mode: color;
+}
+
+.js .about [data-frame] {
+  clip-path: inset(100% 0% 0% 0%);
+}
+
+.js .about [data-line] {
+  transform: translateY(115%);
+}
+
+.js .about [data-fade] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .about [data-frame] {
+    clip-path: none;
+  }
+
+  .js .about [data-line] {
+    transform: none;
+  }
+
+  .js .about [data-fade] {
+    opacity: 1;
+  }
+
+  /* No grade beat either — the frame simply reads warm. */
+  .about-grade {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .about {
+    padding: 12svh 1.25rem 14svh;
+  }
+
+  .about-inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas:
+      "kicker frame"
+      "body   frame";
+    align-items: end;
+    column-gap: 6vw;
+    row-gap: 0;
+  }
+
+  .about-kicker {
+    grid-area: kicker;
+    align-self: start;
+  }
+
+  /* Bottom-aligned against the picture, so the empty half sits above it. */
+  .about-body {
+    grid-area: body;
+    padding-bottom: 0.5rem;
+  }
+
+  .about-frame {
+    grid-area: frame;
+  }
+
+  .about-title {
+    font-size: clamp(2.25rem, 3.6vw, 3.5rem);
+  }
+}
+
+@media (min-width: 1280px) {
+  .about-inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Cursor — a point that draws where it has just been. Difference blend
+   so it survives the bright frames as well as the black.
+------------------------------------------------------------------ */
+.cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+/* Full-viewport canvas with no viewBox, so one SVG unit is one CSS pixel and the
+   path can be written straight from clientX/clientY. */
+.cursor-trail {
+  position: absolute;
+  inset: 0;
+}
+
+.cursor-trail path {
+  fill: none;
+  stroke: var(--ivory);
+  stroke-width: 2.5;
+  stroke-opacity: 0.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cursor-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.cursor-dot {
+  position: absolute;
+  top: -4.5px;
+  left: -4.5px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
+  background: var(--ivory);
 }
 
 .cursor-label {
   position: absolute;
   top: -6px;
-  left: 13px;
+  left: 16px;
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.16em;
