@@ -1452,9 +1452,10 @@ body {
 }
 
 /* ------------------------------------------------------------------
-   About — a teaser, and the one warm frame on the site. The type sits
-   left and bottom-aligned against the picture so the air collects at
-   the top; the subject looks left, into the words, not off the edge.
+   About — a teaser, and the one frame with a person in it. The text
+   column is held to the height of the picture: label at the top,
+   statement at eye level, the way out at the bottom, and a wide band
+   of empty black between the words and the frame.
 ------------------------------------------------------------------ */
 .about {
   position: relative;
@@ -1466,9 +1467,15 @@ body {
   gap: 3rem;
   max-width: 1680px;
   margin: 0 auto;
+  grid-template-areas:
+    "kicker"
+    "statement"
+    "frame"
+    "action";
 }
 
 .about-kicker {
+  grid-area: kicker;
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -1486,64 +1493,58 @@ body {
   background: var(--ivory);
 }
 
-.about-title {
-  font-size: clamp(1.9rem, 8.4vw, 3rem);
+/* One block of type, two voices: the line, then the qualification. */
+.about-statement {
+  grid-area: statement;
+  max-width: 30ch;
+  font-size: clamp(1.35rem, 5.6vw, 1.7rem);
   font-weight: 300;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  color: var(--ivory);
+  line-height: 1.34;
+  letter-spacing: -0.015em;
 }
 
 /* Padded so the descenders survive, then pulled back so the row is the line box. */
 .about-mask {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.14em;
-  margin-bottom: -0.14em;
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
 }
 
-.about-line {
+.about-mask + .about-mask {
+  margin-top: 0.7em;
+}
+
+.about-headline,
+.about-lead {
   display: block;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
   will-change: transform;
 }
 
-.about-lead {
-  margin-top: 1.75rem;
-  max-width: 46ch;
-  font-size: clamp(1rem, 2.1vw, 1.125rem);
-  line-height: 1.6;
-  color: rgba(232, 230, 225, 0.68);
-}
-
-.about-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 2rem;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.about-meta > span:first-child {
+.about-headline {
   color: var(--ivory);
 }
 
-.about-meta > span + span {
-  color: rgba(232, 230, 225, 0.4);
+.about-lead {
+  color: rgba(232, 230, 225, 0.64);
 }
 
 .about-action {
+  grid-area: action;
   display: block;
-  margin-top: 2.5rem;
 }
 
 /* ---- The frame ---- */
 .about-frame {
+  grid-area: frame;
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  aspect-ratio: 730 / 912;
+  aspect-ratio: 4 / 3;
   background: #0b0e11;
 }
 
@@ -1556,24 +1557,15 @@ body {
 
 .about-photo img {
   object-fit: cover;
-}
-
-/* The cold pass. `color` blend takes the hue and saturation from this flat
-   blue-grey and leaves the photograph's own luminance, so the frame reads
-   monochrome until the tween lifts it off and the gold comes back. */
-.about-grade {
-  position: absolute;
-  inset: 0;
-  background: #223039;
-  mix-blend-mode: color;
+  object-position: 50% 42%;
 }
 
 .js .about [data-frame] {
   clip-path: inset(100% 0% 0% 0%);
 }
 
-.js .about [data-line] {
-  transform: translateY(115%);
+.js .about [data-block] {
+  transform: translateY(105%);
 }
 
 .js .about [data-fade] {
@@ -1585,17 +1577,12 @@ body {
     clip-path: none;
   }
 
-  .js .about [data-line] {
+  .js .about [data-block] {
     transform: none;
   }
 
   .js .about [data-fade] {
     opacity: 1;
-  }
-
-  /* No grade beat either — the frame simply reads warm. */
-  .about-grade {
-    opacity: 0;
   }
 }
 
@@ -1604,39 +1591,32 @@ body {
     padding: 12svh 1.25rem 14svh;
   }
 
+  /* The picture sets the height; the middle row absorbs what is left, which
+     is what floats the statement to the centre of the frame. */
   .about-inner {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      "kicker frame"
-      "body   frame";
-    align-items: end;
+      "kicker    frame"
+      "statement frame"
+      "action    frame";
     column-gap: 6vw;
-    row-gap: 0;
+    row-gap: 2rem;
   }
 
-  .about-kicker {
-    grid-area: kicker;
-    align-self: start;
+  .about-statement {
+    align-self: center;
+    font-size: clamp(1.45rem, 2.05vw, 1.95rem);
   }
 
-  /* Bottom-aligned against the picture, so the empty half sits above it. */
-  .about-body {
-    grid-area: body;
-    padding-bottom: 0.5rem;
-  }
-
-  .about-frame {
-    grid-area: frame;
-  }
-
-  .about-title {
-    font-size: clamp(2.25rem, 3.6vw, 3.5rem);
+  .about-action {
+    align-self: end;
   }
 }
 
 @media (min-width: 1280px) {
   .about-inner {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    column-gap: 8vw;
   }
 }
 
