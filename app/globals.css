@@ -969,9 +969,11 @@ body {
    The cards sit a shade above the page black; the one under the pointer
    drops below it and takes full ivory, so only one number reads at a time.
 ------------------------------------------------------------------ */
+/* No bottom padding: Services picks up right where the card grid ends, in the
+   same field of light, with nothing between them. */
 .figures {
   position: relative;
-  padding: 1rem 1.25rem 6rem;
+  padding: 1rem 1.25rem 0;
 }
 
 .figures-inner {
@@ -1112,7 +1114,7 @@ body {
 
 @media (min-width: 900px) {
   .figures {
-    padding: 2rem 1.25rem 10svh;
+    padding: 2rem 1.25rem 0;
   }
 
   .figures-grid {
@@ -1154,11 +1156,13 @@ body {
    well under the type so it reads as atmosphere rather than a picture
    behind text; the list sits in the pool of light on its left.
 ------------------------------------------------------------------ */
+/* No top padding: this is the direct continuation of Figures, not a new section
+   with a gap before it — the kicker sits flush under the last row of cards. */
 .services {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: 6rem 1.25rem 7rem;
+  padding: 0 1.25rem 7rem;
 }
 
 /* Drawn taller than the section so it can drift without opening an edge. */
@@ -1330,7 +1334,7 @@ body {
 
 @media (min-width: 900px) {
   .services {
-    padding: 9svh 1.25rem 11svh;
+    padding: 0 1.25rem 11svh;
   }
 
   .services-list {
