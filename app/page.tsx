@@ -1,6 +1,7 @@
 import { Behind } from "@/components/behind/Behind";
 import { Figures } from "@/components/figures/Figures";
 import { Hero } from "@/components/hero/Hero";
+import { Services } from "@/components/services/Services";
 import { Work } from "@/components/work/Work";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
         <Behind />
         <Work />
         <Figures />
+        <Services />
       </div>
     </main>
   );

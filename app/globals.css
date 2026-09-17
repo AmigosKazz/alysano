@@ -1150,6 +1150,248 @@ body {
 }
 
 /* ------------------------------------------------------------------
+   Services — the room, and six lines over it. The photograph is held
+   well under the type so it reads as atmosphere rather than a picture
+   behind text; the list sits in the pool of light on its left.
+------------------------------------------------------------------ */
+.services {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 6rem 1.25rem 7rem;
+}
+
+/* Drawn taller than the section so it can drift without opening an edge. */
+.services-media {
+  position: absolute;
+  inset: -6% 0;
+  z-index: -1;
+  opacity: 0.38;
+  will-change: transform;
+}
+
+.services-photo {
+  object-fit: cover;
+  object-position: 66% 42%;
+}
+
+/* Black from the left, so the type always has ground under it and the
+   silhouette is the only thing that survives on the right. */
+.services-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      var(--black) 0%,
+      rgba(8, 10, 12, 0.82) 34%,
+      rgba(8, 10, 12, 0.25) 78%,
+      rgba(8, 10, 12, 0.45) 100%
+    ),
+    linear-gradient(to bottom, var(--black) 0%, rgba(8, 10, 12, 0) 26%),
+    linear-gradient(to top, var(--black) 0%, rgba(8, 10, 12, 0) 24%);
+}
+
+.services-inner {
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+.services-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.62);
+}
+
+.services-kicker::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ivory);
+}
+
+.services-list {
+  margin-top: 3rem;
+}
+
+.service {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "index name"
+    ".     detail";
+  column-gap: 1.1rem;
+  row-gap: 0.45rem;
+  padding: 1.15rem 0 1.35rem;
+}
+
+.service-rule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: rgba(232, 230, 225, 0.14);
+  transform-origin: left;
+  transition: background-color 0.5s ease;
+}
+
+.service-index {
+  grid-area: index;
+  padding-top: 0.5em;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: rgba(232, 230, 225, 0.35);
+  transition: color 0.45s ease;
+}
+
+/* Padded so the stroke's ascenders and descenders survive the mask, then pulled
+   back out again so the row height is the line box and nothing else. The opening
+   translate below has to clear this padding too, or the type shows through it. */
+.service-mask {
+  grid-area: name;
+  display: block;
+  overflow: hidden;
+  padding: 0.2em 0 0.34em;
+  margin: -0.2em 0 -0.34em;
+}
+
+.service-name {
+  position: relative;
+  display: block;
+  font-size: clamp(1.75rem, 7.6vw, 4.25rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  will-change: transform;
+}
+
+/* Hollow at rest: the photograph reads straight through the letterforms. */
+.service-outline {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(232, 230, 225, 0.34);
+}
+
+/* Without a stroke to draw, transparent fill would leave the row blank. */
+@supports not (-webkit-text-stroke: 1px currentColor) {
+  .service-outline {
+    color: rgba(232, 230, 225, 0.34);
+  }
+}
+
+.service-fill {
+  position: absolute;
+  inset: 0;
+  color: var(--ivory);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.service-detail {
+  grid-area: detail;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+/* `[data-kicker]` already opens hidden — see the selected-work block above. */
+.js .services [data-rule] {
+  transform: scaleX(0);
+}
+
+.js .services [data-name] {
+  transform: translateY(142%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .services [data-rule],
+  .js .services [data-name] {
+    transform: none;
+  }
+
+  .service-fill {
+    clip-path: inset(0 0 0 0);
+    transition: none;
+  }
+
+  .service-rule,
+  .service-index {
+    transition: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .services {
+    padding: 9svh 1.25rem 11svh;
+  }
+
+  .services-list {
+    margin-top: 4.5rem;
+  }
+
+  .service {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "index name detail";
+    align-items: center;
+    column-gap: 2rem;
+    padding: 1.4rem 0 1.6rem;
+  }
+
+  .service-index {
+    padding-top: 0;
+  }
+
+  .service-name {
+    font-size: clamp(2.25rem, 4.6vw, 4.5rem);
+  }
+
+  /* Desktop keeps the row quiet until it is approached; without a pointer the
+     detail has to carry itself, so it stays put below. */
+  .service-detail {
+    text-align: right;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition:
+      opacity 0.5s ease,
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@media (min-width: 900px) and (hover: hover) {
+  .service:hover .service-fill {
+    clip-path: inset(0 0 0 0);
+  }
+
+  .service:hover .service-detail {
+    opacity: 1;
+    transform: none;
+  }
+
+  .service:hover .service-index {
+    color: var(--steel-blue);
+  }
+
+  .service:hover .service-rule {
+    background: rgba(232, 230, 225, 0.4);
+  }
+}
+
+/* No pointer, no reveal to wait for: the words stand solid. */
+@media (hover: none) {
+  .service-fill {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ------------------------------------------------------------------
    Cursor — a point. Over anything interactive a quiet reticle opens
    around it; elements that name themselves get a small caption instead.
 ------------------------------------------------------------------ */
