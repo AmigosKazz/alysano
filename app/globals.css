@@ -323,11 +323,21 @@ body {
   will-change: transform;
 }
 
-/* The opaque stack that does the covering. */
+/* The opaque stack that does the covering — of the hero above it and of the
+   footer below. The bottom corners are rounded, so the last thing the panel
+   does on the way out is let the ivory through at its edges. */
 .page-cover {
   position: relative;
   z-index: 1;
   background: var(--black);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+/* Everything the page paints rides over the footer. */
+main {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-video {
@@ -1769,4 +1779,107 @@ html.has-cursor a,
 html.has-cursor button,
 html.has-cursor video {
   cursor: none;
+}
+
+/* ------------------------------------------------------------------
+   Footer — stuck to the bottom of the window for the whole scroll and
+   hidden behind the page panel, so arriving at the end uncovers it
+   rather than scrolling to it. Ivory ground, black ink: the site's one
+   inversion, and the name cut out of the opening frame.
+------------------------------------------------------------------ */
+.site-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+  /* The wordmark is set wider than the column on purpose — clipped here rather
+     than allowed to open a horizontal scrollbar. */
+  overflow: hidden;
+  background: var(--ivory);
+  color: var(--black);
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5rem;
+  min-height: 84svh;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 7svh 1.25rem 0;
+}
+
+.footer-cols {
+  display: grid;
+  gap: 2.75rem;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-label {
+  margin-bottom: 1.1rem;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--black);
+}
+
+.footer-item {
+  font-size: 13px;
+  line-height: 1.85;
+  color: rgba(8, 10, 12, 0.55);
+}
+
+.footer-link {
+  transition: color 0.4s ease;
+}
+
+.footer-link:hover {
+  color: var(--black);
+}
+
+.footer-credit {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(8, 10, 12, 0.45);
+}
+
+/* Full-bleed, and filled with the opening frame rather than a colour: the name
+   is a window onto the film, not a logo. */
+.footer-wordmark {
+  font-size: 26vw;
+  line-height: 0.78;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  background-image: url("/video/hero/hero-alysano-poster.jpg");
+  background-size: cover;
+  background-position: 50% 38%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (min-width: 900px) {
+  .footer-inner {
+    padding-inline: 2.5rem;
+  }
+
+  .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 1.4fr);
+    align-items: start;
+    gap: 4vw;
+  }
+
+  /* The credit sits out on the right margin, as the only line on its row. */
+  .footer-credit {
+    justify-self: end;
+    text-align: right;
+  }
 }
