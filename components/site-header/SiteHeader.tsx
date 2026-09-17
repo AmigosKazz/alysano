@@ -89,15 +89,9 @@ export function SiteHeader() {
         >
           <span
             data-clip
-            className="block font-title text-[15px] uppercase tracking-[0.12em] text-ivory md:text-base"
+            className="block font-title text-[25px] uppercase tracking-[0.15em] text-ivory md:text-base"
           >
             Aly Sanoo
-          </span>
-          <span
-            data-intro
-            className="mt-1.5 block font-mono text-[9px] uppercase tracking-[0.16em] whitespace-nowrap text-muted md:text-[10px]"
-          >
-            Post-Production / Sound Designer
           </span>
         </Link>
 

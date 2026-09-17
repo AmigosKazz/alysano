@@ -25,7 +25,7 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aly Sanoo — Post-Production | Sound Designer",
+  title: "Aly Sanoo — Post-Production & Sound Design",
   description:
     "Aly Sanoo cuts images into stories. Editing, post-production and sound design for film, music and commercial work. Based in Madagascar.",
 };

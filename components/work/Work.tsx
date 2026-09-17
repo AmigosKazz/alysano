@@ -64,13 +64,21 @@ export function Work() {
     return () => mm.revert();
   }, []);
 
+  // The preview runs from its first frame on every approach, not from wherever it was
+  // left, so the same opening beat plays each time — and returns to the poster after.
   const play = (event: React.PointerEvent<HTMLAnchorElement>) => {
     if (!canHover()) return;
-    event.currentTarget.querySelector("video")?.play().catch(() => {});
+    const video = event.currentTarget.querySelector("video");
+    if (!video) return;
+    video.currentTime = 0;
+    video.play().catch(() => {});
   };
 
   const halt = (event: React.PointerEvent<HTMLAnchorElement>) => {
-    event.currentTarget.querySelector("video")?.pause();
+    const video = event.currentTarget.querySelector("video");
+    if (!video) return;
+    video.pause();
+    video.currentTime = 0;
   };
 
   return (
@@ -111,7 +119,7 @@ export function Work() {
               onPointerEnter={play}
               onPointerLeave={halt}
             >
-              <span data-plate className="work-plate">
+              <span className="work-plate">
                 <video
                   className="work-video"
                   src={`/video/works/web/${project.slug}.mp4`}
@@ -127,7 +135,6 @@ export function Work() {
                 />
               </span>
 
-              <span className="work-veil" aria-hidden="true" />
               <span className="work-scrim" aria-hidden="true" />
 
               <span className="work-meta">

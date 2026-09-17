@@ -775,30 +775,23 @@ body {
 .work-plate {
   position: absolute;
   inset: 0;
-  will-change: transform;
 }
 
+/* Nothing is held back at rest: every frame sits at full exposure. Approaching one
+   pushes the image in a little and lays a soft gradient under the type — nothing else. */
 .work-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* Held back at rest so the band reads as one dark surface; the hovered frame
-   is the only one at full exposure. */
-.work-veil {
-  position: absolute;
-  inset: 0;
-  background: rgba(8, 10, 12, 0.34);
-  transition: background-color 0.6s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .work-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(8, 10, 12, 0.88) 0%, rgba(8, 10, 12, 0) 46%);
+  background: linear-gradient(to top, rgba(8, 10, 12, 0.62) 0%, rgba(8, 10, 12, 0) 70%);
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.4s ease;
 }
 
 .work-meta {
@@ -840,10 +833,12 @@ body {
   color: rgba(232, 230, 225, 0.62);
 }
 
-/* Without a pointer there is no hover to wait for — the frames read open. */
+/* Without a pointer there is no hover to wait for — the frames read open. The type
+   then sits on the image permanently, so the gradient carries more weight here than
+   it needs to under a pointer. */
 @media (hover: none) {
-  .work-veil {
-    background: rgba(8, 10, 12, 0.16);
+  .work-scrim {
+    background: linear-gradient(to top, rgba(8, 10, 12, 0.85) 0%, rgba(8, 10, 12, 0) 62%);
   }
 
   .work-scrim,
@@ -854,9 +849,9 @@ body {
 }
 
 @media (hover: hover) {
-  .work-tile:hover .work-veil,
-  .work-tile:focus-visible .work-veil {
-    background: rgba(8, 10, 12, 0.04);
+  .work-tile:hover .work-video,
+  .work-tile:focus-visible .work-video {
+    transform: scale(1.034);
   }
 
   .work-tile:hover .work-scrim,
@@ -896,12 +891,18 @@ body {
     opacity: 1;
   }
 
-  .work-veil,
+  .work-video,
   .work-scrim,
   .work-meta,
   .work-all::after,
   .work-all svg {
     transition: none;
+  }
+
+  /* Matches the hover rule's specificity, so the push-in is dropped rather than snapped. */
+  .work-tile:hover .work-video,
+  .work-tile:focus-visible .work-video {
+    transform: none;
   }
 }
 
