@@ -11,15 +11,17 @@ const HEADLINE = ["Cutting", "images into", "stories."];
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
+  const foreRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const media = mediaRef.current;
+    const fore = foreRef.current;
     const video = videoRef.current;
     const headline = headlineRef.current;
-    if (!section || !media || !video || !headline) return;
+    if (!section || !media || !fore || !video || !headline) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia(section);
@@ -86,69 +88,51 @@ export function Hero() {
       video.pause();
     });
 
-    // ---- Scroll --------------------------------------------------------------
-    mm.add(
-      { desktop: "(min-width: 768px)", motion: "(prefers-reduced-motion: no-preference)" },
-      (ctx) => {
-        const { desktop, motion } = ctx.conditions ?? {};
-        if (!motion) return;
+    // ---- Leaving the hero ----------------------------------------------------
+    // The section is sticky, so it holds while the panel underneath rides up over it
+    // at full scroll speed. Nothing fades and nothing closes: the frame is simply
+    // covered, edge hard, like a wipe. Inside it, two planes drift at different
+    // rates over that same viewport of scroll — the image slowest, the type a little
+    // ahead of it — which is the only depth in the move.
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap
+        .timeline({
+          defaults: { ease: "none", duration: 1 },
+          scrollTrigger: {
+            start: 0,
+            end: () => window.innerHeight,
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+          },
+        })
+        // The media box is drawn 8% taller than the frame, so it can rise without
+        // opening a gap at the bottom edge.
+        .fromTo(media, { yPercent: 0, scale: 1 }, { yPercent: -6, scale: 1.04 }, 0)
+        .fromTo(fore, { yPercent: 0 }, { yPercent: -11 }, 0);
+    });
 
-        if (desktop) {
-          // Pinned for one viewport of scroll: the image pushes in and dims, the headline slips
-          // upward, then the frame closes like a letterbox onto the section already waiting underneath.
-          gsap
-            .timeline({
-              defaults: { ease: "none" },
-              scrollTrigger: {
-                trigger: section,
-                start: "top top",
-                end: () => "+=" + section.offsetHeight,
-                scrub: 0.6,
-                pin: true,
-                pinSpacing: false,
-                anticipatePin: 1,
-              },
-            })
-            // Durations are fractions of the pinned scroll distance (1 = the full viewport of scroll).
-            .to(media, { scale: 1.1, duration: 1 }, 0)
-            .to(media, { opacity: 0.3, duration: 0.7, ease: "power1.in" }, 0.3)
-            .to(headline, { y: -32, opacity: 0, duration: 0.55, ease: "power1.in" }, 0)
-            // Declared from 1 explicitly: a plain .to() would record the start value when the
-            // scrub timeline first renders, which happens while the intro still has these
-            // hidden at opacity 0 — scrolling back would then restore them to 0, not 1.
-            .fromTo(
-              meta(),
-              { opacity: 1 },
-              { opacity: 0, duration: 0.3, immediateRender: false },
-              0,
-            )
-            .fromTo(
-              section,
-              { clipPath: "inset(0% 0% 0% 0%)" },
-              { clipPath: "inset(40% 0% 60% 0%)", duration: 1, ease: "power1.in" },
-              0,
-            );
-          return;
-        }
-
-        // Mobile: no pin, a lighter touch. The image pushes in and dims as the section scrolls off.
-        gsap
-          .timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: { trigger: section, start: "top top", end: "bottom top", scrub: 0.6 },
-          })
-          .to(media, { scale: 1.06, opacity: 0.35, duration: 1 }, 0)
-          .to(headline, { y: -24, opacity: 0, duration: 0.5 }, 0)
-          .fromTo(meta(), { opacity: 1 }, { opacity: 0, duration: 0.35, immediateRender: false }, 0);
-      },
-    );
+    // Once the panel has the frame fully covered, stop paying for it.
+    mm.add("all", () => {
+      ScrollTrigger.create({
+        start: () => window.innerHeight,
+        end: "max",
+        invalidateOnRefresh: true,
+        onToggle: (self) => {
+          section.classList.toggle("is-covered", self.isActive);
+          if (self.isActive) video.pause();
+          else if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            video.play().catch(() => {});
+          }
+        },
+      });
+    });
 
     return () => mm.revert();
   }, []);
 
   return (
     <section ref={sectionRef} className="hero">
-      <div ref={mediaRef} className="absolute inset-0 will-change-transform">
+      <div ref={mediaRef} className="hero-media">
         <video
           ref={videoRef}
           className="hero-video h-full w-full"
@@ -173,16 +157,19 @@ export function Hero() {
         <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
       </div>
 
-      <Showreel />
+      {/* The foreground plane — showreel and headline travel together, ahead of the image. */}
+      <div ref={foreRef} className="hero-fore">
+        <Showreel />
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-6 md:px-10 md:pb-9">
-        <h1 ref={headlineRef} className="hero-headline font-title uppercase text-ivory">
-          {HEADLINE.map((line) => (
-            <span key={line} data-line className="block">
-              {line}
-            </span>
-          ))}
-        </h1>
+        <div className="absolute inset-x-0 bottom-0 px-5 pb-6 md:px-10 md:pb-9">
+          <h1 ref={headlineRef} className="hero-headline font-title uppercase text-ivory">
+            {HEADLINE.map((line) => (
+              <span key={line} data-line className="block">
+                {line}
+              </span>
+            ))}
+          </h1>
+        </div>
       </div>
     </section>
   );
