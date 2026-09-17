@@ -77,24 +77,22 @@ export function Behind() {
   return (
     <section ref={sectionRef} id="about" className="behind">
       <div className="behind-inner">
-        <div className="behind-clients">
-          <p className="font-mono behind-clients-label">Trusted by</p>
-          <ul className="behind-logos">
-            {CLIENTS.map((client) => (
-              <li key={client.name} data-logo>
-                <Image
-                  src={client.src}
-                  alt={client.name}
-                  width={client.w}
-                  height={client.h}
-                  sizes="180px"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <span className="behind-divider" data-rule />
+        {/*<div className="behind-clients">*/}
+        {/*  <p className="font-mono behind-clients-label">Trusted by</p>*/}
+        {/*  <ul className="behind-logos">*/}
+        {/*    {CLIENTS.map((client) => (*/}
+        {/*      <li key={client.name} data-logo>*/}
+        {/*        <Image*/}
+        {/*          src={client.src}*/}
+        {/*          alt={client.name}*/}
+        {/*          width={client.w}*/}
+        {/*          height={client.h}*/}
+        {/*          sizes="180px"*/}
+        {/*        />*/}
+        {/*      </li>*/}
+        {/*    ))}*/}
+        {/*  </ul>*/}
+        {/*</div>*/}
 
         <div className="behind-grid">
           <h2 className="behind-title font-title" data-reveal>
