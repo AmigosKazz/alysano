@@ -698,28 +698,39 @@ body {
   color: rgba(232, 230, 225, 0.82);
 }
 
+/* Carries the header's accent: the label sits in steel blue and the arrow in the
+   same solid square as the CONTACT call, so the two real actions on the page match. */
 .work-all {
-  position: relative;
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  gap: 0.8rem;
-  padding-bottom: 0.55rem;
+  gap: 0.85rem;
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ivory);
+  color: var(--steel-blue);
+  transition: color 0.4s ease;
 }
 
-/* The rule is the button: it draws itself out from the left on approach. */
-.work-all::after {
+.work-all:hover,
+.work-all:focus-visible {
+  color: #a5bcc8;
+}
+
+.work-all-label {
+  position: relative;
+}
+
+/* The rule draws itself out from the left on approach. Floated below the label
+   rather than padding it, so the label stays optically centred on the square. */
+.work-all-label::after {
   content: "";
   position: absolute;
   right: 0;
-  bottom: 0;
+  bottom: -0.55rem;
   left: 0;
   height: 1px;
-  background: rgba(232, 230, 225, 0.28);
+  background: rgba(143, 169, 184, 0.4);
   transform: scaleX(0.34);
   transform-origin: left;
   transition:
@@ -727,18 +738,48 @@ body {
     background-color 0.4s ease;
 }
 
-.work-all:hover::after,
-.work-all:focus-visible::after {
+.work-all:hover .work-all-label::after,
+.work-all:focus-visible .work-all-label::after {
   transform: scaleX(1);
-  background: var(--ivory);
+  background: var(--steel-blue);
 }
 
-.work-all svg {
+.work-all-arrow {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  color: var(--black);
+  background: var(--steel-blue);
+  transition: background-color 0.4s ease;
+}
+
+.work-all:hover .work-all-arrow,
+.work-all:focus-visible .work-all-arrow {
+  background: #a5bcc8;
+}
+
+/* Drawn twice so one can leave to the right as its double arrives from the left. */
+.work-all-arrow svg {
+  grid-area: 1 / 1;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.work-all:hover svg {
-  transform: translateX(4px);
+.work-all-arrow svg + svg {
+  transform: translateX(-210%);
+}
+
+.work-all:hover .work-all-arrow svg,
+.work-all:focus-visible .work-all-arrow svg {
+  transform: translateX(210%);
+}
+
+.work-all:hover .work-all-arrow svg + svg,
+.work-all:focus-visible .work-all-arrow svg + svg {
+  transform: translateX(0);
 }
 
 /* ---- The band ----
@@ -894,9 +935,16 @@ body {
   .work-video,
   .work-scrim,
   .work-meta,
-  .work-all::after,
-  .work-all svg {
+  .work-all,
+  .work-all-label::after,
+  .work-all-arrow,
+  .work-all-arrow svg {
     transition: none;
+  }
+
+  /* The second arrow only exists to roll in; with no roll it would sit stacked. */
+  .work-all-arrow svg + svg {
+    opacity: 0;
   }
 
   /* Matches the hover rule's specificity, so the push-in is dropped rather than snapped. */
@@ -1196,9 +1244,12 @@ body {
     linear-gradient(to top, var(--black) 0%, rgba(8, 10, 12, 0) 24%);
 }
 
+/* The section itself still starts flush under the figures — the photograph is meant
+   to pick up with no seam. Only the type is held down off the cards above it. */
 .services-inner {
   max-width: 1680px;
   margin: 0 auto;
+  padding-top: 5rem;
 }
 
 .services-kicker {
@@ -1335,6 +1386,10 @@ body {
 @media (min-width: 900px) {
   .services {
     padding: 0 1.25rem 11svh;
+  }
+
+  .services-inner {
+    padding-top: 9svh;
   }
 
   .services-list {
