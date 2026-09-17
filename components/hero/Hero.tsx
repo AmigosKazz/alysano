@@ -3,35 +3,23 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Showreel } from "@/components/showreel/Showreel";
 import { INTRO_EVENT } from "@/lib/intro";
 
-const FPS = 25;
 const HEADLINE = ["Cutting", "images into", "stories."];
-
-/** HH:MM:SS:FF — time the way an edit suite reads it. */
-function timecode(seconds: number) {
-  const t = Math.max(0, seconds);
-  return [t / 3600, (t % 3600) / 60, t % 60, (t % 1) * FPS]
-    .map((n) => String(Math.floor(n)).padStart(2, "0"))
-    .join(":");
-}
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
-  const tcRef = useRef<HTMLSpanElement>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const media = mediaRef.current;
     const video = videoRef.current;
     const headline = headlineRef.current;
-    const footer = footerRef.current;
-    const tc = tcRef.current;
-    if (!section || !media || !video || !headline || !footer || !tc) return;
+    if (!section || !media || !video || !headline) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia(section);
@@ -40,27 +28,15 @@ export function Hero() {
     video.muted = true;
     video.defaultMuted = true;
 
-    // Live timecode readout — one text write per frame at most.
-    let raf = 0;
-    let last = "";
-    const tick = () => {
-      const next = timecode(video.currentTime);
-      if (next !== last) {
-        tc.textContent = next;
-        last = next;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    // Anything marked [data-intro] joins the opening reveal — collected loosely so
+    // composition changes never leave the timeline holding a missing element.
+    const meta = () => gsap.utils.toArray<HTMLElement>("[data-intro]", section);
 
     // ---- Opening sequence ---------------------------------------------------
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       video.play().catch(() => {});
 
       const lines = gsap.utils.toArray<HTMLElement>("[data-line]", headline);
-      const meta = gsap.utils.toArray<HTMLElement>("[data-intro]", footer);
-      const rule = footer.querySelector("[data-rule]");
-      const arrow = footer.querySelector("[data-arrow]");
 
       const tl = gsap
         .timeline({ paused: true, defaults: { ease: "power3.out" } })
@@ -74,17 +50,15 @@ export function Hero() {
           { clipPath: "inset(0 0 0% 0)", y: 0, duration: 0.7, stagger: 0.1 },
           1.1,
         )
-        // 1.5s — production metadata.
+        // 1.5s — the showreel call arrives last, quietly.
         .fromTo(
-          meta,
+          meta(),
           { opacity: 0, y: 6 },
           { opacity: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power2.out" },
           1.5,
         )
-        .fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "power3.inOut" }, 1.5)
         // Afterwards the image breathes, barely.
-        .to(video, { scale: 1.025, duration: 14, ease: "sine.inOut", repeat: -1, yoyo: true }, 1.8)
-        .to(arrow, { opacity: 0.35, duration: 1.8, ease: "sine.inOut", repeat: -1, yoyo: true }, 2.4);
+        .to(video, { scale: 1.025, duration: 14, ease: "sine.inOut", repeat: -1, yoyo: true }, 1.8);
 
       let started = false;
       const start = () => {
@@ -139,7 +113,7 @@ export function Hero() {
             .to(media, { scale: 1.1, duration: 1 }, 0)
             .to(media, { opacity: 0.3, duration: 0.7, ease: "power1.in" }, 0.3)
             .to(headline, { y: -32, opacity: 0, duration: 0.55, ease: "power1.in" }, 0)
-            .to(footer, { opacity: 0, duration: 0.3 }, 0)
+            .to(meta(), { opacity: 0, duration: 0.3 }, 0)
             .fromTo(
               section,
               { clipPath: "inset(0% 0% 0% 0%)" },
@@ -157,14 +131,11 @@ export function Hero() {
           })
           .to(media, { scale: 1.06, opacity: 0.35, duration: 1 }, 0)
           .to(headline, { y: -24, opacity: 0, duration: 0.5 }, 0)
-          .to(footer, { opacity: 0, duration: 0.35 }, 0);
+          .to(meta(), { opacity: 0, duration: 0.35 }, 0);
       },
     );
 
-    return () => {
-      cancelAnimationFrame(raf);
-      mm.revert();
-    };
+    return () => mm.revert();
   }, []);
 
   return (
@@ -179,7 +150,6 @@ export function Hero() {
           playsInline
           preload="auto"
           poster="/video/hero/hero-alysano-poster.jpg"
-          data-cursor="play"
           aria-hidden="true"
           tabIndex={-1}
           disablePictureInPicture
@@ -194,6 +164,8 @@ export function Hero() {
         </video>
         <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
       </div>
+
+      <Showreel />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-6 md:px-10 md:pb-9">
         <h1 ref={headlineRef} className="hero-headline font-title uppercase text-ivory">

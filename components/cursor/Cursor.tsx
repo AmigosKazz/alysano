@@ -3,41 +3,30 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
+const INTERACTIVE = "a, button, [data-cursor]";
+
 /**
- * Minimal custom cursor for fine pointers only. A small dot; over anything
- * carrying `data-cursor="play|open"` it opens into a quiet ring with a label.
+ * A point. Over anything interactive a quiet reticle opens around it.
+ * Fine pointers only — touch keeps the native behaviour.
  */
 export function Cursor() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLSpanElement>(null);
   const ringRef = useRef<HTMLSpanElement>(null);
-  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
-    const dot = dotRef.current;
     const ring = ringRef.current;
-    const label = labelRef.current;
-    if (!root || !dot || !ring || !label) return;
+    if (!root || !ring) return;
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     document.documentElement.classList.add("has-cursor");
-    gsap.set(ring, { scale: 0 });
+    gsap.set(ring, { scale: 0.4, opacity: 0 });
 
     const moveX = gsap.quickTo(root, "x", { duration: 0.14, ease: "power3" });
     const moveY = gsap.quickTo(root, "y", { duration: 0.14, ease: "power3" });
 
     let visible = false;
-    let mode: string | null = null;
-
-    const setMode = (next: string | null) => {
-      if (next === mode) return;
-      mode = next;
-      if (next) label.textContent = next;
-      gsap.to(dot, { scale: next ? 0 : 1, duration: 0.3, ease: "power3.out", overwrite: "auto" });
-      gsap.to(ring, { scale: next ? 1 : 0, duration: 0.4, ease: "power3.out", overwrite: "auto" });
-      gsap.to(label, { opacity: next ? 1 : 0, duration: 0.25, ease: "power2.out", overwrite: "auto" });
-    };
+    let active = false;
 
     const onMove = (event: PointerEvent) => {
       if (!visible) {
@@ -50,8 +39,16 @@ export function Cursor() {
     };
 
     const onOver = (event: Event) => {
-      const target = (event.target as Element | null)?.closest<HTMLElement>("[data-cursor]");
-      setMode(target?.dataset.cursor?.toUpperCase() ?? null);
+      const next = Boolean((event.target as Element | null)?.closest(INTERACTIVE));
+      if (next === active) return;
+      active = next;
+      gsap.to(ring, {
+        scale: next ? 1 : 0.4,
+        opacity: next ? 1 : 0,
+        duration: next ? 0.45 : 0.3,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
     };
 
     const onLeave = () => {
@@ -73,10 +70,8 @@ export function Cursor() {
 
   return (
     <div ref={rootRef} className="cursor" aria-hidden="true">
-      <span ref={dotRef} className="cursor-dot" />
-      <span ref={ringRef} className="cursor-ring">
-        <span ref={labelRef} className="cursor-label" />
-      </span>
+      <span className="cursor-dot" />
+      <span ref={ringRef} className="cursor-ring" />
     </div>
   );
 }

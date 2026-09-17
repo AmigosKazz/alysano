@@ -357,7 +357,204 @@ body {
 }
 
 /* ------------------------------------------------------------------
-   Cursor — desktop only; <Cursor /> activates it for fine pointers.
+   Showreel — the call sits in the empty right of the frame. Approaching
+   it lifts a muted preview behind the label; opening fills the screen.
+------------------------------------------------------------------ */
+.showreel {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 28%;
+  z-index: 20;
+}
+
+.showreel-trigger {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: right;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The preview grows behind the label, centred on it. */
+.showreel-preview {
+  position: absolute;
+  top: 50%;
+  right: -0.75rem;
+  width: 210px;
+  height: 118px;
+  margin-top: -59px;
+  overflow: hidden;
+  background: #05070a;
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+/* Denser under the label, so the type holds on bright frames of the reel. */
+.showreel-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to left,
+    rgba(8, 10, 12, 0.78) 0%,
+    rgba(8, 10, 12, 0.52) 45%,
+    rgba(8, 10, 12, 0.34) 100%
+  );
+}
+
+.showreel-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.showreel-trigger:hover .showreel-preview,
+.showreel-trigger:focus-visible .showreel-preview {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.showreel-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  transition: color 0.35s ease;
+}
+
+.showreel-label svg {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.showreel-trigger:hover .showreel-label svg {
+  transform: translateX(3px);
+}
+
+.showreel-rule {
+  position: relative;
+  display: block;
+  height: 1px;
+  margin-top: 0.7rem;
+  background: rgba(232, 230, 225, 0.22);
+  transform-origin: right;
+  transition: background-color 0.4s ease;
+}
+
+.showreel-trigger:hover .showreel-rule {
+  background: rgba(232, 230, 225, 0.5);
+}
+
+@media (min-width: 768px) {
+  .showreel {
+    right: 2.5rem;
+    bottom: 30%;
+  }
+
+  .showreel-preview {
+    width: 268px;
+    height: 150px;
+    margin-top: -75px;
+  }
+
+  .showreel-label {
+    font-size: 11px;
+  }
+}
+
+/* ---- Fullscreen playback ---- */
+.showreel-player {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--black);
+}
+
+.showreel-player-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.showreel-close,
+.showreel-player-toggle {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.75);
+  transition: color 0.3s ease;
+}
+
+.showreel-close:hover,
+.showreel-player-toggle:hover {
+  color: var(--ivory);
+}
+
+.showreel-close {
+  top: 1.75rem;
+  right: 1.25rem;
+}
+
+.showreel-player-toggle {
+  bottom: 1.75rem;
+  left: 1.25rem;
+}
+
+.showreel-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: rgba(232, 230, 225, 0.16);
+}
+
+.showreel-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--steel-blue);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+@media (min-width: 768px) {
+  .showreel-close {
+    right: 2.5rem;
+  }
+
+  .showreel-player-toggle {
+    left: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showreel-preview,
+  .showreel-label svg {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Cursor — a point. Over anything interactive a quiet reticle opens
+   around it. No labels.
 ------------------------------------------------------------------ */
 .cursor {
   position: fixed;
@@ -372,33 +569,22 @@ body {
 
 .cursor-dot {
   position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 6px;
-  height: 6px;
+  top: -2.5px;
+  left: -2.5px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--ivory);
 }
 
 .cursor-ring {
   position: absolute;
-  top: -24px;
-  left: -24px;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgba(232, 230, 225, 0.55);
+  top: -17px;
+  left: -17px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(232, 230, 225, 0.6);
   border-radius: 50%;
-}
-
-.cursor-label {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ivory);
-  opacity: 0;
 }
 
 html.has-cursor,
