@@ -1632,9 +1632,10 @@ main {
 
 /* ------------------------------------------------------------------
    Contact — the last room. One line held in the middle of an empty
-   screen, and a trail of frames the pointer drags out behind it. The
-   trail runs over the type, not under it: the reel comes apart across
-   the invitation.
+   screen, and a trail of frames the pointer drags out behind it.
+   The type sits over the frames in difference blend: on black it reads
+   as ivory, and wherever a frame passes under it the letters invert
+   into the picture. Nothing is ever hidden, it is only developed.
 ------------------------------------------------------------------ */
 .contact {
   position: relative;
@@ -1649,7 +1650,7 @@ main {
 .contact-trail {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -1659,7 +1660,7 @@ main {
   position: absolute;
   top: 0;
   left: 0;
-  width: clamp(118px, 10.5vw, 172px);
+  width: clamp(112px, 9.3vw, 152px);
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
@@ -1669,11 +1670,12 @@ main {
 
 .contact-statement {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  mix-blend-mode: difference;
   display: block;
   text-align: center;
   text-transform: uppercase;
-  font-size: clamp(3.25rem, 9.6vw, 9.5rem);
+  font-size: clamp(3.5rem, 19vw, 9.1rem);
   line-height: 0.88;
   letter-spacing: 0.01em;
   color: var(--ivory);
@@ -1690,7 +1692,6 @@ main {
 .contact-line {
   display: block;
   will-change: transform;
-  transition: opacity 0.5s ease;
 }
 
 .js .contact [data-line] {
@@ -1700,18 +1701,6 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .js .contact [data-line] {
     transform: none;
-  }
-}
-
-/* The statement is the only thing on screen, so the approach is read on the
-   line itself: the rest of the block steps back and the hovered line holds. */
-@media (hover: hover) and (pointer: fine) {
-  .contact-statement:hover .contact-line {
-    opacity: 0.45;
-  }
-
-  .contact-statement .contact-line:hover {
-    opacity: 1;
   }
 }
 
