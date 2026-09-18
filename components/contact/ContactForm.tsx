@@ -29,7 +29,7 @@ const FIELDS: Field[] = [
   {
     name: "email",
     label: "Email",
-    placeholder: "john.doe@example.com",
+    placeholder: "john@example.com",
     type: "email",
     required: true,
     autoComplete: "email",

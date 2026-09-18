@@ -1904,9 +1904,23 @@ html.has-cursor video {
 }
 
 /* ---- Form ---- */
+/* Two to a row at every width, phones included — stacking them would turn the
+   form into a column of six wells and push the send button off the screen. */
 .form-grid {
   display: grid;
-  gap: 1.4rem 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 0.7rem;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+/* Narrower than this and two fields stop taking a readable placeholder. */
+@media (max-width: 359px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .field {
@@ -2007,13 +2021,40 @@ html.has-cursor video {
   color: var(--steel-blue);
 }
 
-@media (min-width: 760px) {
-  .form-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+/* On a phone the fields carry 16px: any smaller and iOS zooms the whole page in
+   the moment one takes focus. The desktop scale picks up again past this. */
+@media (max-width: 759px) {
+  .contact-page {
+    padding-top: 14svh;
   }
 
-  .field-wide {
-    grid-column: 1 / -1;
+  /* The word has to hold the top of a phone screen the way it holds the top of a
+     window — at the desktop size it would read as a caption. */
+  .contact-page-title {
+    font-size: 20vw;
+  }
+
+  .field-label {
+    font-size: 14px;
+  }
+
+  .field-input {
+    padding: 0.45rem 0.7rem;
+    font-size: 16px;
+  }
+
+  .form-grid {
+    gap: 1.25rem 0.6rem;
+  }
+
+  .contact-page-body {
+    gap: 5rem;
+  }
+}
+
+@media (min-width: 760px) {
+  .form-grid {
+    gap: 1.4rem 1rem;
   }
 }
 
