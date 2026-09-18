@@ -15,6 +15,19 @@ function Arrow() {
   );
 }
 
+/** The inside of the control, shared by both the link and the button. */
+function Face({ label }: { label: string }) {
+  return (
+    <>
+      <span className="cta-label">{label}</span>
+      <span className="cta-arrow" aria-hidden="true">
+        <Arrow />
+        <Arrow />
+      </span>
+    </>
+  );
+}
+
 type Props = ComponentProps<typeof Link> & { label: string };
 
 /**
@@ -24,11 +37,18 @@ type Props = ComponentProps<typeof Link> & { label: string };
 export function Cta({ label, ...props }: Props) {
   return (
     <Link {...props} className="cta font-mono">
-      <span className="cta-label">{label}</span>
-      <span className="cta-arrow" aria-hidden="true">
-        <Arrow />
-        <Arrow />
-      </span>
+      <Face label={label} />
     </Link>
+  );
+}
+
+type ButtonProps = ComponentProps<"button"> & { label: string };
+
+/** The same control where the action submits rather than navigates. */
+export function CtaButton({ label, ...props }: ButtonProps) {
+  return (
+    <button {...props} className="cta font-mono">
+      <Face label={label} />
+    </button>
   );
 }

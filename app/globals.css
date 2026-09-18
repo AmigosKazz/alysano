@@ -1841,7 +1841,7 @@ html.has-cursor video {
 /* Full-bleed, and filled with the opening frame rather than a colour: the name
    is a window onto the film, not a logo. */
 .footer-wordmark {
-  font-size: 26vw;
+  font-size: 29vw;
   line-height: 0.78;
   letter-spacing: 0.005em;
   text-transform: uppercase;
@@ -1870,5 +1870,167 @@ html.has-cursor video {
   .footer-credit {
     justify-self: end;
     text-align: right;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Contact page — the word fills the top edge to edge, the form sits
+   under its left half and the details hold the right margin. Fields
+   are wells cut into the black rather than cards laid on it.
+------------------------------------------------------------------ */
+.contact-page {
+  /* At least a full window: any shorter and the footer, which waits underneath,
+     shows up in the first screen instead of being uncovered at the end. */
+  min-height: 100svh;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 18svh 1.25rem 10svh;
+}
+
+.contact-page-title {
+  font-size: 10vw;
+  line-height: 0.82;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--ivory);
+}
+
+.contact-page-body {
+  display: grid;
+  gap: 4rem;
+  margin-top: 9svh;
+}
+
+/* ---- Form ---- */
+.form-grid {
+  display: grid;
+  gap: 1.4rem 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field-label {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: rgba(232, 230, 225, 0.82);
+}
+
+/* The only mark on the page that is not ivory — it has one job. */
+.field-mark {
+  margin-left: 0.3em;
+  color: var(--steel-blue);
+}
+
+.field-input {
+  width: 100%;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(232, 230, 225, 0.09);
+  border-radius: 3px;
+  background: rgba(232, 230, 225, 0.05);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ivory);
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.field-input::placeholder {
+  color: rgba(232, 230, 225, 0.28);
+}
+
+.field-input:hover {
+  background: rgba(232, 230, 225, 0.055);
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: rgba(143, 169, 184, 0.55);
+  background: rgba(232, 230, 225, 0.06);
+}
+
+.field-input:user-invalid {
+  border-color: rgba(185, 165, 138, 0.5);
+}
+
+.field-area {
+  min-height: 72px;
+  padding-block: 0.5rem;
+  resize: vertical;
+}
+
+.form-action {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.9rem;
+}
+
+.form-status {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+/* ---- The right margin ---- */
+.contact-page-info {
+  display: grid;
+  gap: 1.6rem;
+  align-content: start;
+}
+
+.info-label {
+  margin-bottom: 0.5rem;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.info-value {
+  font-size: 13px;
+  color: var(--ivory);
+}
+
+.info-link {
+  transition: color 0.4s ease;
+}
+
+.info-link:hover {
+  color: var(--steel-blue);
+}
+
+@media (min-width: 760px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1100px) {
+  .contact-page {
+    padding-inline: 2.5rem;
+  }
+
+  /* The form keeps to the left half, the details to the right quarter, and the
+     empty band between them is the point. */
+  .contact-page-body {
+    grid-template-columns: minmax(0, 48.5%) minmax(0, 24%);
+    justify-content: space-between;
+  }
+
+  .contact-page-info {
+    justify-items: start;
+    padding-top: 0.5rem;
   }
 }

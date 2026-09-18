@@ -44,21 +44,26 @@ export function SiteHeader() {
       });
     });
 
-    // Reveal, cued by the hero — or after a beat on pages without one.
+    // Reveal, cued by the hero — or straight away on pages without one. The lead-in
+    // exists to let the opening shot get going first; with no shot to wait for, it
+    // would only leave the header missing for four seconds.
     mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const hero = document.querySelector(".hero");
+      const lead = hero ? 0.8 : 0.1;
+
       const tl = gsap
         .timeline({ paused: true })
         .fromTo(
           "[data-clip]",
           { clipPath: "inset(0 0 100% 0)" },
           { clipPath: "inset(0 0 0% 0)", duration: 0.7, ease: "power3.out" },
-          0.8,
+          lead,
         )
         .fromTo(
           "[data-intro]",
           { opacity: 0, y: 6 },
           { opacity: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power2.out" },
-          1.5,
+          lead + 0.35,
         );
 
       let played = false;
@@ -68,7 +73,7 @@ export function SiteHeader() {
         tl.play();
       };
       window.addEventListener(INTRO_EVENT, play);
-      const fallback = window.setTimeout(play, 2600);
+      const fallback = window.setTimeout(play, hero ? 2600 : 40);
 
       return () => {
         window.removeEventListener(INTRO_EVENT, play);
@@ -108,7 +113,7 @@ export function SiteHeader() {
               </li>
             ))}
             <li data-intro className="ml-1 md:ml-4">
-              <a href="#contact" className="nav-cta" aria-label="Contact">
+              <Link href="/contact" className="nav-cta" aria-label="Contact">
                 <span className="nav-cta-frame">
                   <i className="nav-cta-corners" aria-hidden="true" />
                   <span
@@ -123,7 +128,7 @@ export function SiteHeader() {
                   <Arrow />
                   <Arrow />
                 </span>
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>
