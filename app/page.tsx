@@ -1,6 +1,5 @@
 import { About } from "@/components/about/About";
 import { Behind } from "@/components/behind/Behind";
-import { Built } from "@/components/built/Built";
 import { Contact } from "@/components/contact/Contact";
 import { Figures } from "@/components/figures/Figures";
 import { Hero } from "@/components/hero/Hero";
@@ -20,7 +19,6 @@ export default function Home() {
         <Services />
         <About />
         <Contact />
-        <Built />
       </div>
     </main>
   );

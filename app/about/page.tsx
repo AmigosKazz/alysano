@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AboutStage } from "@/components/about/AboutStage";
+import { Built } from "@/components/built/Built";
 
 export const metadata: Metadata = {
   title: "About — Aly Sanoo",
@@ -12,6 +13,7 @@ export default function AboutPage() {
     <main>
       <div className="page-cover">
         <AboutStage />
+        <Built />
       </div>
     </main>
   );

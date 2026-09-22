@@ -3014,7 +3014,7 @@ html.has-cursor video {
 .built-track {
   display: flex;
   width: max-content;
-  animation: built-marquee 46s linear infinite;
+  animation: built-marquee 38s linear infinite;
 }
 
 @keyframes built-marquee {
@@ -3028,17 +3028,23 @@ html.has-cursor video {
   }
 }
 
+/* Hung from a common top line: every still is set to the same width and keeps
+   its own height, so the strip reads as a row of contact prints pinned up
+   rather than a filmstrip cut to one format. */
 .built-frames {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   flex: none;
-  gap: clamp(2px, 0.3vw, 6px);
 }
 
 .built-frame {
-  height: clamp(150px, 19vw, 300px);
-  width: auto;
+  width: clamp(135px, 15.6vw, 260px);
+  height: auto;
   flex: none;
+  /* The space between stills is carried by each still, not by a `gap` on the
+     row: that way the last one before the seam carries it too, and the loop's
+     -50% lands on exactly one copy. */
+  margin-right: clamp(1.75rem, 5vw, 5.25rem);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3064,22 +3070,20 @@ html.has-cursor video {
   /* Title and paragraph hold the left third; the manifesto sits further out
      on the same baseline, the way the rest of the page pairs a caption
      against a block of reading. */
+  /* The paragraph keeps the left quarter; the manifesto starts on the middle
+     of the page and stops short of the right margin, so the line sits in open
+     black rather than against an edge. Both are set on the same bottom line. */
   .built-head {
-    display: flex;
-    justify-content: space-between;
-    gap: clamp(2rem, 6vw, 6rem);
-  }
-
-  .built-copy-block {
-    flex: 0 1 auto;
+    display: grid;
+    grid-template-columns: 50% minmax(0, 26%);
+    align-items: end;
   }
 
   .built-manifesto {
-    flex: 0 0 clamp(280px, 26vw, 420px);
-    margin-top: 0.75rem;
+    margin-top: 0;
   }
 
   .built-marquee {
-    margin-top: 5rem;
+    margin-top: 7rem;
   }
 }
