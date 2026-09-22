@@ -10,7 +10,7 @@ const MENU = ["Cut", "Copy", "Collaborate", "Share…"];
 
 const FACTS = [
   "Based in Antananarivo, Madagascar",
-  "Working with crews and labels across Europe and Africa",
+  "Working with crews around the world",
   "Available for select projects",
 ];
 
@@ -109,21 +109,6 @@ export function AboutStage() {
         { opacity: 1, y: 0, duration: 1, delay: 0.6, ease: "power3.out" },
       );
 
-      // It leaves the moment the second frame rises into its line, rather than
-      // sitting on top of the picture.
-      const second = root.querySelector(".about-m2-figure");
-      if (second) {
-        gsap.to("[data-badge]", {
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: second,
-            start: "top 34%",
-            toggleActions: "play none none reverse",
-          },
-        });
-      }
 
       // The photographs drift inside their frames for as long as they are in view.
       gsap.utils.toArray<HTMLElement>("[data-photo]", root).forEach((photo) => {
@@ -171,21 +156,26 @@ export function AboutStage() {
     <div ref={rootRef} className="about-stage">
       {/* The two movements share one pinned credit, so it has to share their box. */}
       <div className="about-reel">
-        <div className="about-pin">
-          <div data-badge className="about-badge">
-            {/* The menu an editor lives in, sitting where the film's credit would. */}
-            <div className="about-menu" aria-hidden>
-              {MENU.map((item) => (
-                <span key={item}>{item}</span>
-              ))}
+        {/* The box the credit is free to travel in: it holds at the top of the
+            window while the opening frame passes, then scrolls off with the
+            second title rather than being switched off. */}
+        <div className="about-pin-range">
+          <div className="about-pin">
+            <div data-badge className="about-badge">
+              {/* The menu an editor lives in, where the film's credit would be. */}
+              <div className="about-menu" aria-hidden>
+                {MENU.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
+              <p className="about-credit font-title">
+                <span className="about-credit-mark" aria-hidden />
+                <span className="about-credit-text">
+                  “Directed, cut and finished by Aly Sanoo”
+                </span>
+                <span className="about-credit-mark about-credit-mark--end" aria-hidden />
+              </p>
             </div>
-            <p className="about-credit font-title">
-              <span className="about-credit-mark" aria-hidden />
-              <span className="about-credit-text">
-                “Directed, cut and finished by Aly Sanoo”
-              </span>
-              <span className="about-credit-mark about-credit-mark--end" aria-hidden />
-            </p>
           </div>
         </div>
 
@@ -193,13 +183,26 @@ export function AboutStage() {
         <section data-movement className="about-m1">
           <figure data-frame className="about-m1-figure">
             <div data-photo className="about-photo">
-              <Image
-                src="/images/about/about-wide.jpg"
-                alt="Aly Sanoo in profile against a pool of cold light"
-                fill
-                priority
-                sizes="(min-width: 900px) 68vw, 100vw"
-              />
+              <video
+                className="about-video"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster="/video/about/about-hero-poster.jpg"
+                aria-label="Aly Sanoo in profile against a pool of cold light"
+                tabIndex={-1}
+                disablePictureInPicture
+                disableRemotePlayback
+              >
+                <source
+                  src="/video/about/about-hero-1080.mp4"
+                  type="video/mp4"
+                  media="(min-width: 768px)"
+                />
+                <source src="/video/about/about-hero-720.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Two lines: one would run under the credit that hangs beside it. */}
@@ -243,8 +246,8 @@ export function AboutStage() {
           <figure data-frame className="about-m2-figure">
             <div data-photo className="about-photo">
               <Image
-                src="/images/about/about-portrait.jpg"
-                alt="Aly Sanoo lit by a single vertical strip of light"
+                src="/images/alysano/hero%20about%20image.jpg"
+                alt="Aly Sanoo directing talent beside the camera on a night shoot"
                 fill
                 sizes="(min-width: 900px) 40vw, 100vw"
               />

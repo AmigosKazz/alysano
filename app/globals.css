@@ -2405,11 +2405,26 @@ html.has-cursor video {
 }
 
 /* --- the credit that rides over both movements --------------------- */
-/* Height zero so it takes no room in the flow: it only has to hold a
-   position while the two movements pass underneath it. */
+.about-reel {
+  position: relative;
+}
+
+/* The distance the credit is allowed to travel. It ends level with the second
+   title, so the credit holds at the top of the window for the whole opening
+   frame and then simply scrolls off — it is never switched off mid-page. */
+.about-pin-range {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: calc(22svh + 62vw + 16svh);
+  pointer-events: none;
+}
+
+/* Height zero so it takes no room: it only has to hold a position while the
+   opening frame passes underneath it. */
 .about-pin {
   position: sticky;
-  top: 15svh;
+  top: 22svh;
   z-index: 5;
   height: 0;
 }
@@ -2499,7 +2514,10 @@ html.has-cursor video {
   inset: -6% 0;
 }
 
-.about-photo img {
+.about-photo img,
+.about-video {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -2705,17 +2723,21 @@ html.has-cursor video {
 
   /* The picture takes the left two thirds and stands nearly the full window;
      the reading column is pushed to the right margin and set on its bottom. */
+  .about-pin-range {
+    height: calc(85svh + 17svh);
+  }
+
   .about-m1 {
     display: grid;
     grid-template-columns: 68% 23.75%;
     justify-content: space-between;
     align-items: end;
-    padding-top: 5.5svh;
+    padding-top: 13svh;
   }
 
   .about-m1-figure {
     aspect-ratio: auto;
-    height: 77svh;
+    height: 72svh;
   }
 
   .about-m1-title {
@@ -2797,11 +2819,11 @@ html.has-cursor video {
    measure rather than stacking at desktop weight. */
 @media (max-width: 899px) {
   .about-m1 {
-    padding-top: 18svh;
+    padding-top: 22svh;
   }
 
   .about-pin {
-    top: 11svh;
+    top: 14svh;
   }
 
   .about-badge {
