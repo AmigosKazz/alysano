@@ -2358,3 +2358,467 @@ html.has-cursor video {
     margin-top: 0.5rem;
   }
 }
+
+/* ------------------------------------------------------------------
+   About — the long form. Two full-height movements on one frame: the
+   title against the left edge, the picture holding the middle, the
+   reading column pinned to the right margin, and the credit line
+   riding over both as a selected clip. Then the statement, lit word by
+   word on the scroll, and the three disciplines spelled out.
+------------------------------------------------------------------ */
+.about-stage {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* The mask each word rises through. Negative insets give the ascenders and
+   descenders room once they have arrived. */
+.about-stage-word {
+  display: inline-block;
+  clip-path: inset(-0.22em -0.04em -0.3em -0.04em);
+}
+
+.about-stage-word > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+.js .about-stage-word > span {
+  transform: translateY(108%);
+}
+
+.js .about-stage [data-fade],
+.js .about-stage [data-badge] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .about-stage-word > span {
+    transform: none;
+  }
+
+  .js .about-stage [data-fade],
+  .js .about-stage [data-badge] {
+    opacity: 1;
+  }
+}
+
+/* --- the credit that rides over both movements --------------------- */
+/* Height zero so it takes no room in the flow: it only has to hold a
+   position while the two movements pass underneath it. */
+.about-pin {
+  position: sticky;
+  top: 15svh;
+  z-index: 5;
+  height: 0;
+}
+
+.about-badge {
+  position: absolute;
+  left: 41%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 92vw;
+}
+
+/* The menu an editor lives inside, drawn where a film's credit card would be. */
+.about-menu {
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+  margin: 0 auto 6px;
+  border-radius: 7px;
+  background: rgba(44, 44, 46, 0.92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  font-size: clamp(0.6875rem, 0.85vw, 0.875rem);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.about-menu span {
+  padding: 0.5em 0.95em;
+  white-space: nowrap;
+}
+
+.about-menu span + span {
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Ivory ground, black ink: the one place on the page where type is lifted out
+   of the dark instead of sitting in it. */
+.about-credit {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0.24em 0.34em 0.1em;
+  background: rgba(200, 200, 196, 0.92);
+  font-size: clamp(0.8125rem, 1.15vw, 1.25rem);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #0b0b0b;
+}
+
+/* The two round grips a text selection carries on a touch screen. */
+.about-credit-mark {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(228, 228, 224, 0.95);
+}
+
+.about-credit-mark--end {
+  top: auto;
+  left: auto;
+  right: -3px;
+  bottom: -3px;
+}
+
+/* --- opening ------------------------------------------------------- */
+.about-m1 {
+  padding-top: 12svh;
+}
+
+.about-m1-figure {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  background: rgba(232, 230, 225, 0.04);
+}
+
+/* Oversized inside the frame so the scrub drift never exposes an edge. */
+.about-photo {
+  position: absolute;
+  inset: -6% 0;
+}
+
+.about-photo img {
+  object-fit: cover;
+}
+
+/* The picture carries its own light; this holds the top-left corner dark enough
+   for the title to sit on it. */
+.about-m1-figure::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    105deg,
+    rgba(8, 10, 12, 0.82) 0%,
+    rgba(8, 10, 12, 0.45) 26%,
+    rgba(8, 10, 12, 0) 52%
+  );
+  pointer-events: none;
+}
+
+/* The title sits on the picture's dark quarter — the only overlap on the page. */
+.about-m1-line {
+  display: block;
+}
+
+.about-m1-title {
+  position: absolute;
+  top: 8%;
+  left: 3%;
+  z-index: 2;
+  max-width: 92%;
+  font-size: clamp(1.75rem, 6.2vw, 4rem);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  text-shadow: 0 2px 30px rgba(8, 10, 12, 0.5);
+}
+
+.about-facts {
+  display: grid;
+  gap: 0.55rem;
+  font-size: clamp(0.75rem, 0.95vw, 0.9375rem);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: rgba(232, 230, 225, 0.82);
+}
+
+.about-facts span {
+  padding-inline-end: 0.5em;
+  color: rgba(232, 230, 225, 0.4);
+}
+
+.about-copy {
+  margin-top: 2.5rem;
+  font-size: clamp(0.9375rem, 1.1vw, 1.125rem);
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+/* --- the frame ----------------------------------------------------- */
+.about-m2 {
+  padding-top: 14svh;
+}
+
+.about-m2-title {
+  font-size: clamp(1.75rem, 6.2vw, 4rem);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.about-m2-figure {
+  position: relative;
+  overflow: hidden;
+  margin: 2.5rem 0 0;
+  aspect-ratio: 3 / 2;
+  background: rgba(232, 230, 225, 0.04);
+}
+
+.about-quote {
+  margin: 2.5rem 0 0;
+  font-size: clamp(0.9375rem, 1.1vw, 1.125rem);
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.about-attribution {
+  margin-top: 2.5rem;
+  color: var(--ivory);
+}
+
+/* --- statement ----------------------------------------------------- */
+.about-stage-statement {
+  margin-top: clamp(7rem, 15vw, 15rem);
+}
+
+.about-stage-loud {
+  font-size: clamp(2.75rem, 10.5vw, 8.5rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+/* Only unlit where the scrub will light it — with no JS, or with motion turned
+   down, the statement is simply read. */
+.js .about-stage-loud {
+  color: rgba(125, 133, 140, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .about-stage-loud {
+    color: var(--ivory);
+  }
+}
+
+.about-stage-loud--end {
+  margin-top: clamp(2rem, 4vw, 4.5rem);
+  text-align: right;
+}
+
+.about-stage-notes {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(2.5rem, 5vw, 5rem);
+  font-size: clamp(0.875rem, 0.95vw, 1rem);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.about-stage-note--right {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.about-stage-note-strong {
+  color: var(--ivory);
+}
+
+/* --- disciplines --------------------------------------------------- */
+.about-stage-disciplines {
+  margin-top: clamp(7rem, 15vw, 15rem);
+  padding-bottom: clamp(6rem, 11vw, 11rem);
+}
+
+.about-stage-kicker {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.52);
+}
+
+.about-stage-kicker span {
+  padding-inline-end: 0.7em;
+  color: rgba(232, 230, 225, 0.3);
+}
+
+.about-stage-list {
+  display: grid;
+  gap: 3rem;
+  margin-top: 3.5rem;
+  border-top: 1px solid rgba(232, 230, 225, 0.12);
+  padding-top: 2.5rem;
+}
+
+.about-stage-discipline-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.about-stage-discipline-line {
+  margin-top: 1rem;
+  max-width: 34ch;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.about-stage-discipline-items {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1.75rem;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.6);
+}
+
+.about-stage-action {
+  display: inline-block;
+  margin-top: 4rem;
+}
+
+@media (min-width: 900px) {
+  .about-stage {
+    padding: 0 1.75rem;
+  }
+
+  /* The picture takes the left two thirds and stands nearly the full window;
+     the reading column is pushed to the right margin and set on its bottom. */
+  .about-m1 {
+    display: grid;
+    grid-template-columns: 68% 23.75%;
+    justify-content: space-between;
+    align-items: end;
+    padding-top: 5.5svh;
+  }
+
+  .about-m1-figure {
+    aspect-ratio: auto;
+    height: 77svh;
+  }
+
+  .about-m1-title {
+    top: 16%;
+    left: 1.6%;
+    font-size: clamp(2.25rem, 3.2vw, 4rem);
+  }
+
+  .about-copy {
+    margin-top: 4rem;
+    text-align: justify;
+  }
+
+  /* Title left, picture in the middle of the window, quote on the right margin
+     — the same three tracks the opening uses, spread out. */
+  .about-m2 {
+    display: grid;
+    grid-template-columns: 30.5% 40% 23.75%;
+    justify-content: space-between;
+    padding-top: 12svh;
+  }
+
+  .about-m2-title {
+    grid-column: 1;
+    font-size: clamp(2.25rem, 3.2vw, 4rem);
+  }
+
+  .about-m2-figure {
+    grid-column: 2;
+    margin-top: 12svh;
+  }
+
+  /* Held against the picture: the quote reads at its middle, the name sits on
+     its bottom edge. */
+  .about-quote {
+    grid-column: 3;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    margin-top: 12svh;
+  }
+
+  /* The auto margins centre the quote against the picture and leave the name
+     on its bottom edge. */
+  .about-quote > p {
+    margin-block: auto;
+  }
+
+  .about-attribution {
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .about-stage-loud {
+    max-width: 16ch;
+  }
+
+  .about-stage-loud--end {
+    max-width: 19ch;
+    margin-inline-start: auto;
+  }
+
+  /* Two notes on separate tracks, neither starting at the left edge: the
+     statement above keeps that line to itself. */
+  .about-stage-notes {
+    grid-template-columns: minmax(0, 26%) minmax(0, 26%);
+    justify-content: space-between;
+    padding-inline-start: 22%;
+    column-gap: 2rem;
+  }
+
+  .about-stage-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4rem;
+  }
+}
+
+/* One column, so the pictures carry the page and the type holds its own
+   measure rather than stacking at desktop weight. */
+@media (max-width: 899px) {
+  .about-m1 {
+    padding-top: 18svh;
+  }
+
+  .about-pin {
+    top: 11svh;
+  }
+
+  .about-badge {
+    left: 50%;
+  }
+
+  .about-side {
+    margin-top: 2.5rem;
+  }
+
+  .about-copy,
+  .about-quote,
+  .about-stage-note {
+    max-width: 52ch;
+  }
+
+  .about-stage-loud--end {
+    text-align: left;
+  }
+}
