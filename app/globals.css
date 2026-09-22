@@ -2075,3 +2075,243 @@ html.has-cursor video {
     padding-top: 0.5rem;
   }
 }
+
+/* ------------------------------------------------------------------
+   Work stage — one film at a time on a dark stage. Three panels cut
+   from the same edit, the reel moving sideways under a title that
+   changes with it. The screen is the control: left half back, right
+   half forward.
+------------------------------------------------------------------ */
+.stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 100svh;
+  background: var(--black);
+}
+
+.stage-reel {
+  position: absolute;
+  inset: 0;
+}
+
+.stage-track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+
+.slide {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Laid out on a shallow cylinder: the outer panels turn away from the centre,
+   which is what stops three rectangles reading as a contact sheet. */
+.slide-panels {
+  display: flex;
+  align-items: center;
+  gap: 1.1vw;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.panel {
+  position: relative;
+  display: block;
+  flex: none;
+  width: clamp(120px, 15vw, 250px);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: #0b0e11;
+}
+
+.panel img,
+.panel video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.panel-left {
+  transform: rotateY(9deg) scale(0.94);
+}
+
+.panel-right {
+  transform: rotateY(-9deg) scale(0.94);
+}
+
+/* ---- The screen as the control ---- */
+.stage-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 50%;
+  cursor: none;
+}
+
+.stage-zone-prev {
+  left: 0;
+}
+
+.stage-zone-next {
+  right: 0;
+}
+
+/* ---- The bar ---- */
+.stage-bar {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0 1.25rem 1.5rem;
+  /* The bar itself must not swallow a click meant for the reel. */
+  pointer-events: none;
+}
+
+.stage-title {
+  font-size: clamp(2.5rem, 9vw, 9rem);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+/* Padded so the descenders survive, then pulled back so the row is the line box. */
+.stage-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.stage-line {
+  display: block;
+  will-change: transform;
+}
+
+.stage-line-meta {
+  margin-top: 0.7rem;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.5);
+}
+
+.stage-aside {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  padding-bottom: 0.4rem;
+}
+
+.stage-next {
+  display: none;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--ivory);
+}
+
+.stage-next-label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  color: rgba(232, 230, 225, 0.4);
+}
+
+.stage-marks {
+  display: grid;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.stage-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(232, 230, 225, 0.18);
+  border-radius: 50%;
+  color: rgba(232, 230, 225, 0.75);
+  transition:
+    border-color 0.4s ease,
+    color 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.stage-mark:hover,
+.stage-mark:focus-visible {
+  border-color: var(--steel-blue);
+  background: rgba(143, 169, 184, 0.1);
+  color: var(--ivory);
+}
+
+.stage-mark-back svg {
+  transform: rotate(180deg);
+}
+
+/* The reel's position, kept where a timecode would sit. */
+.stage-count {
+  position: absolute;
+  top: 50%;
+  right: 1.25rem;
+  z-index: 2;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  color: rgba(232, 230, 225, 0.4);
+  pointer-events: none;
+}
+
+@media (min-width: 900px) {
+  .stage-bar {
+    padding: 0 2.5rem 2.25rem;
+  }
+
+  .stage-next {
+    display: block;
+  }
+
+  .stage-count {
+    right: 2.5rem;
+  }
+}
+
+/* No pointer to name the halves, so the marks carry the whole job. */
+@media (hover: none) {
+  .stage-mark {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* On a phone the three panels have to hold the middle of the screen with the
+   black still reading around them, and the count gets out of their way. */
+@media (max-width: 759px) {
+  .panel {
+    width: 27vw;
+  }
+
+  .slide-panels {
+    gap: 2.5vw;
+  }
+
+  .stage-count {
+    top: 12svh;
+  }
+
+  .stage-line-meta {
+    margin-top: 0.5rem;
+  }
+}

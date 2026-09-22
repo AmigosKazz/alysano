@@ -5,30 +5,7 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Cta } from "@/components/ui/Cta";
-
-type Project = {
-  slug: string;
-  title: string;
-  line: string;
-  /** Column weight in the five-column band — the two sizes alternate per row. */
-  span: 3 | 2;
-  /** Plays on loop from the start, no pointer needed — the other tiles still wait for hover. */
-  autoplay?: boolean;
-};
-
-// Titles are working titles on the supplied footage; swap them for the real ones.
-const PROJECTS: Project[] = [
-  { slug: "work-01", title: "Night Parade", line: "Music video — edit, sound design", span: 3 },
-  { slug: "work-02", title: "Plumage", line: "Music video — edit", span: 2, autoplay: true },
-  {
-    slug: "work-03",
-    title: "Stairwell",
-    line: "Music video — edit, sound design",
-    span: 2,
-    autoplay: true,
-  },
-  { slug: "work-04", title: "Nocturne", line: "Commercial — edit, post", span: 3 },
-];
+import { PROJECTS } from "@/lib/projects";
 
 /** Previews are only worth their bandwidth where there is a pointer to hover with. */
 const canHover = () =>

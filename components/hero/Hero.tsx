@@ -148,7 +148,7 @@ export function Hero() {
           disableRemotePlayback
         >
           <source
-            src="/video/hero/hero-alysano-1080.mp4"
+            src="/video/alysano/FOND%2006.mp4"
             type="video/mp4"
             media="(min-width: 768px)"
           />
