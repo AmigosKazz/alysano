@@ -2439,7 +2439,7 @@ html.has-cursor video {
    opening frame passes underneath it. */
 .about-pin {
   position: sticky;
-  top: 22svh;
+  top: 15svh;
   z-index: 5;
   height: 0;
 }
@@ -2772,15 +2772,18 @@ html.has-cursor video {
   /* The picture takes the left two thirds and stands nearly the full window;
      the reading column is pushed to the right margin and set on its bottom. */
   .about-pin-range {
-    height: calc(85svh + 17svh);
+    height: calc(100svh + 14svh);
   }
 
+  /* A full window: the second title stays under the fold until the opening
+     frame has been left behind. */
   .about-m1 {
     display: grid;
     grid-template-columns: 68% 23.75%;
     justify-content: space-between;
     align-items: end;
     padding-top: 13svh;
+    padding-bottom: 15svh;
   }
 
   .about-m1-figure {
@@ -2789,7 +2792,7 @@ html.has-cursor video {
   }
 
   .about-m1-title {
-    top: 16%;
+    top: 8%;
     left: 1.6%;
     font-size: clamp(2.25rem, 3.2vw, 4rem);
   }
