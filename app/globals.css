@@ -2917,3 +2917,169 @@ html.has-cursor video {
     text-align: left;
   }
 }
+
+/* ------------------------------------------------------------------
+   Built — the last word before the footer. A manifesto held to the
+   editorial grid, and underneath it a strip of set photographs running
+   past edge to edge on a slow, unbroken loop.
+------------------------------------------------------------------ */
+.built {
+  position: relative;
+  padding: 6.5rem 0 4rem;
+  overflow-x: clip;
+}
+
+.built-inner {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* The mask each word rises through. Negative insets give the ascenders and
+   descenders room once they have arrived. */
+.built-word {
+  display: inline-block;
+  clip-path: inset(-0.22em -0.04em -0.3em -0.04em);
+}
+
+.built-word > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+.js .built-word > span {
+  transform: translateY(108%);
+}
+
+.js .built [data-fade] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .built-word > span {
+    transform: none;
+  }
+
+  .js .built [data-fade] {
+    opacity: 1;
+  }
+}
+
+.built-title {
+  max-width: 14ch;
+  font-size: clamp(2.25rem, 7.5vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.built-copy {
+  margin-top: 1.75rem;
+  max-width: 42ch;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* The line reads as a held statement, not a caption — set larger than the
+   bracketed labels the rest of the page uses. */
+.built-manifesto {
+  margin-top: 2.5rem;
+  max-width: 22ch;
+  font-size: clamp(1rem, 1.8vw, 1.375rem);
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.68);
+}
+
+.built-manifesto span {
+  padding-inline: 0.3em;
+  color: rgba(232, 230, 225, 0.32);
+}
+
+/* Full-bleed: the strip runs to the literal edges of the window, the way the
+   opening photograph on /about already does — clipped here rather than
+   breaking the page open, since nothing inside it needs to stay sticky. */
+.built-marquee {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-top: 3.5rem;
+  overflow: hidden;
+}
+
+.built-track {
+  display: flex;
+  width: max-content;
+  animation: built-marquee 46s linear infinite;
+}
+
+@keyframes built-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Exactly one of the two rendered copies — a percentage of the track's
+       own (doubled) width, so the loop is seamless at any viewport size. */
+    transform: translateX(-50%);
+  }
+}
+
+.built-frames {
+  display: flex;
+  align-items: flex-end;
+  flex: none;
+  gap: clamp(2px, 0.3vw, 6px);
+}
+
+.built-frame {
+  height: clamp(150px, 19vw, 300px);
+  width: auto;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .built-track {
+    animation: none;
+  }
+
+  /* Only one pass needed once it's no longer scrolling. */
+  .built-track > .built-frames:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .built {
+    padding: 9rem 0 5rem;
+  }
+
+  .built-inner {
+    padding: 0 1.75rem;
+  }
+
+  /* Title and paragraph hold the left third; the manifesto sits further out
+     on the same baseline, the way the rest of the page pairs a caption
+     against a block of reading. */
+  .built-head {
+    display: flex;
+    justify-content: space-between;
+    gap: clamp(2rem, 6vw, 6rem);
+  }
+
+  .built-copy-block {
+    flex: 0 1 auto;
+  }
+
+  .built-manifesto {
+    flex: 0 0 clamp(280px, 26vw, 420px);
+    margin-top: 0.75rem;
+  }
+
+  .built-marquee {
+    margin-top: 5rem;
+  }
+}
