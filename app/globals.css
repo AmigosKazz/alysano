@@ -2370,6 +2370,11 @@ html.has-cursor video {
   max-width: 1680px;
   margin: 0 auto;
   padding: 0 1.25rem;
+  /* `clip`, not `hidden`: it contains the opening figure's full-bleed
+     breakout (a hair wider than 100% on some browsers, from the scrollbar)
+     without turning this into a scroll container — a plain `hidden` here
+     would force `overflow-y: auto` and break the credit's sticky pin. */
+  overflow-x: clip;
 }
 
 /* The mask each word rises through. Negative insets give the ascenders and
@@ -2775,20 +2780,37 @@ html.has-cursor video {
     height: calc(100svh + 14svh);
   }
 
+  /* The credit now lands over a picture that starts at the literal top of the
+     window instead of 13svh down, so it rides that much higher too. */
+  .about-pin {
+    top: 3svh;
+  }
+
   /* A full window: the second title stays under the fold until the opening
-     frame has been left behind. */
+     frame has been left behind. Full-bleed on top and left — the picture
+     runs to the true edges of the window, the way the header logo already
+     does — and only the reading column keeps the page's own right margin. */
   .about-m1 {
-    display: grid;
-    grid-template-columns: 68% 23.75%;
-    justify-content: space-between;
-    align-items: end;
-    padding-top: 13svh;
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(2rem, 5vw, 4.5rem);
     padding-bottom: 15svh;
+    padding-right: max(1.75rem, calc((100vw - 1680px) / 2 + 1.75rem));
   }
 
   .about-m1-figure {
+    flex: 1 1 auto;
+    min-width: 0;
     aspect-ratio: auto;
-    height: 72svh;
+    height: 85svh;
+  }
+
+  .about-side {
+    flex: 0 0 clamp(260px, 22vw, 420px);
   }
 
   .about-m1-title {
