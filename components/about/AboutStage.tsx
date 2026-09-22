@@ -8,6 +8,8 @@ import { Cta } from "@/components/ui/Cta";
 
 const MENU = ["Cut", "Copy", "Collaborate", "Share…"];
 
+const CREDIT = "“Directed, cut and finished by Aly Sanoo”";
+
 const FACTS = [
   "Based in Antananarivo, Madagascar",
   "Working with crews around the world",
@@ -102,12 +104,56 @@ export function AboutStage() {
         }
       });
 
-      // The credit line arrives once, with the opening frame, and then rides along.
-      gsap.fromTo(
-        "[data-badge]",
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.6, ease: "power3.out" },
-      );
+      // The credit is typed out the way it would be selected: the line arrives
+      // plain, a selection sweeps across it left to right with the far grip
+      // riding its edge, and only once it has landed does the menu answer.
+      const credit = root.querySelector<HTMLElement>(".about-credit");
+      const sweep = 0.55;
+
+      gsap
+        .timeline({ defaults: { ease: "none" } })
+        .fromTo(
+          "[data-badge]",
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+          0,
+        )
+        .fromTo(
+          "[data-grip]",
+          { opacity: 0, scale: 0.4 },
+          { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" },
+          0.55,
+        )
+        // Fill and black ink share one edge; the ivory copy is cut away behind it.
+        .fromTo(
+          "[data-fill], [data-ink]",
+          { clipPath: "inset(0% 100% 0% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: sweep, ease: "power2.inOut" },
+          0.6,
+        )
+        .fromTo(
+          "[data-base]",
+          { clipPath: "inset(0% 0% 0% 0%)" },
+          { clipPath: "inset(0% 0% 0% 100%)", duration: sweep, ease: "power2.inOut" },
+          0.6,
+        )
+        // The trailing grip travels with that edge and stops on the right corner.
+        .fromTo(
+          "[data-grip-end]",
+          { x: 0 },
+          {
+            x: () => (credit ? credit.offsetWidth : 0),
+            duration: sweep,
+            ease: "power2.inOut",
+          },
+          0.6,
+        )
+        .fromTo(
+          "[data-menu]",
+          { opacity: 0, y: 5, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "power3.out" },
+          0.6 + sweep + 0.12,
+        );
 
 
       // The photographs drift inside their frames for as long as they are in view.
@@ -163,17 +209,26 @@ export function AboutStage() {
           <div className="about-pin">
             <div data-badge className="about-badge">
               {/* The menu an editor lives in, where the film's credit would be. */}
-              <div className="about-menu" aria-hidden>
+              <div data-menu className="about-menu" aria-hidden>
                 {MENU.map((item) => (
                   <span key={item}>{item}</span>
                 ))}
               </div>
+              {/* The line is set twice: ivory on the black, black on the sweep.
+                  One clip runs across both, so the selection reads as it lands. */}
               <p className="about-credit font-title">
-                <span className="about-credit-mark" aria-hidden />
-                <span className="about-credit-text">
-                  “Directed, cut and finished by Aly Sanoo”
+                <span data-fill className="about-credit-fill" aria-hidden />
+                <span data-base className="about-credit-base">{CREDIT}</span>
+                <span data-ink className="about-credit-ink" aria-hidden>
+                  {CREDIT}
                 </span>
-                <span className="about-credit-mark about-credit-mark--end" aria-hidden />
+                <span data-grip className="about-credit-mark" aria-hidden />
+                <span
+                  data-grip
+                  data-grip-end
+                  className="about-credit-mark about-credit-mark--end"
+                  aria-hidden
+                />
               </p>
             </div>
           </div>

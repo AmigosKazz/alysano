@@ -2389,8 +2389,16 @@ html.has-cursor video {
 }
 
 .js .about-stage [data-fade],
-.js .about-stage [data-badge] {
+.js .about-stage [data-badge],
+.js .about-stage [data-grip],
+.js .about-stage [data-menu] {
   opacity: 0;
+}
+
+/* Nothing selected yet: ground and ink both cut away. */
+.js .about-credit-fill,
+.js .about-credit-ink {
+  clip-path: inset(0% 100% 0% 0%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2399,8 +2407,15 @@ html.has-cursor video {
   }
 
   .js .about-stage [data-fade],
-  .js .about-stage [data-badge] {
+  .js .about-stage [data-badge],
+  .js .about-stage [data-grip],
+  .js .about-stage [data-menu] {
     opacity: 1;
+  }
+
+  .js .about-credit-fill,
+  .js .about-credit-ink {
+    clip-path: none;
   }
 }
 
@@ -2468,12 +2483,31 @@ html.has-cursor video {
   width: fit-content;
   margin: 0 auto;
   padding: 0.24em 0.34em 0.1em;
-  background: rgba(200, 200, 196, 0.92);
   font-size: clamp(0.8125rem, 1.15vw, 1.25rem);
   letter-spacing: 0.01em;
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
+  color: var(--ivory);
+}
+
+/* The ground the selection lays down, and the black ink that reads on it. Both
+   are cut by the same edge, and the ivory copy underneath is cut away behind
+   it, so the line is selected rather than switched on. */
+.about-credit-fill {
+  position: absolute;
+  inset: 0;
+  background: rgba(200, 200, 196, 0.92);
+}
+
+.about-credit-base {
+  position: relative;
+}
+
+.about-credit-ink {
+  position: absolute;
+  inset: 0;
+  padding: inherit;
   color: #0b0b0b;
 }
 
@@ -2493,6 +2527,20 @@ html.has-cursor video {
   left: auto;
   right: -3px;
   bottom: -3px;
+}
+
+/* While the sweep runs, the trailing grip is carried along the line by a
+   transform, so it leaves from the same corner as the other one. */
+.js .about-credit-mark--end {
+  left: -3px;
+  right: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .about-credit-mark--end {
+    left: auto;
+    right: -3px;
+  }
 }
 
 /* --- opening ------------------------------------------------------- */
