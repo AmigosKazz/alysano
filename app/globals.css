@@ -332,6 +332,11 @@ body {
   background: var(--black);
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  /* Contains the full-bleed breakouts inside it (the opening picture on
+     /about, the strip of set stills) when `100vw` runs a scrollbar's width
+     past the visible page. `clip` rather than `hidden`: it establishes no
+     scroll container, so the sticky credit inside still reads the window. */
+  overflow-x: clip;
 }
 
 /* Everything the page paints rides over the footer. */
@@ -2370,11 +2375,6 @@ html.has-cursor video {
   max-width: 1680px;
   margin: 0 auto;
   padding: 0 1.25rem;
-  /* `clip`, not `hidden`: it contains the opening figure's full-bleed
-     breakout (a hair wider than 100% on some browsers, from the scrollbar)
-     without turning this into a scroll container — a plain `hidden` here
-     would force `overflow-y: auto` and break the credit's sticky pin. */
-  overflow-x: clip;
 }
 
 /* The mask each word rises through. Negative insets give the ascenders and
@@ -2425,8 +2425,14 @@ html.has-cursor video {
 }
 
 /* --- the credit that rides over both movements --------------------- */
+/* The three measurements the opening row is built from. They live here
+   because the credit has to solve for the same picture the row lays out —
+   see `.about-pin-range`. */
 .about-reel {
   position: relative;
+  --about-side: clamp(260px, 22vw, 420px);
+  --about-gutter: clamp(2rem, 5vw, 4.5rem);
+  --about-edge: max(1.75rem, calc((100vw - 1680px) / 2 + 1.75rem));
 }
 
 /* The distance the credit is allowed to travel. It ends level with the second
@@ -2780,10 +2786,25 @@ html.has-cursor video {
     height: calc(100svh + 14svh);
   }
 
-  /* The credit now lands over a picture that starts at the literal top of the
-     window instead of 13svh down, so it rides that much higher too. */
   .about-pin {
-    top: 3svh;
+    top: 21svh;
+  }
+
+  /* Breaks out to the window and is then inset by everything the picture is
+     not — the reading column, the gutter, the page's right margin. What is
+     left is the picture's own box, so the credit's `left` below reads as a
+     position across the picture at any width. */
+  .about-pin-range {
+    inset-inline: auto;
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    padding-right: calc(var(--about-side) + var(--about-gutter) + var(--about-edge));
+  }
+
+  .about-badge {
+    left: 70%;
+    transform: translateX(-50%);
   }
 
   /* A full window: the second title stays under the fold until the opening
@@ -2797,9 +2818,9 @@ html.has-cursor video {
     margin-left: -50vw;
     display: flex;
     align-items: flex-end;
-    gap: clamp(2rem, 5vw, 4.5rem);
+    gap: var(--about-gutter);
     padding-bottom: 15svh;
-    padding-right: max(1.75rem, calc((100vw - 1680px) / 2 + 1.75rem));
+    padding-right: var(--about-edge);
   }
 
   .about-m1-figure {
@@ -2810,7 +2831,7 @@ html.has-cursor video {
   }
 
   .about-side {
-    flex: 0 0 clamp(260px, 22vw, 420px);
+    flex: 0 0 var(--about-side);
   }
 
   .about-m1-title {

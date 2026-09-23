@@ -246,7 +246,7 @@ export function AboutStage() {
                 playsInline
                 preload="metadata"
                 poster="/video/about/about-hero-poster.jpg"
-                aria-label="Aly Sanoo in profile against a pool of cold light"
+                aria-label="Aly Sanoo standing against a vertical strip of cold light"
                 tabIndex={-1}
                 disablePictureInPicture
                 disableRemotePlayback
