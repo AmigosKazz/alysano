@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { CONTACT } from "@/lib/contact";
+import { CONTACT, telHref } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact — Aly Sanoo",
@@ -14,8 +14,6 @@ export const metadata: Metadata = {
  * two columns is the point — the page asks for one thing at a time.
  */
 export default function ContactPage() {
-  const social = CONTACT.social.filter((link) => link.href);
-
   return (
     <main>
       <div className="page-cover">
@@ -35,20 +33,22 @@ export default function ContactPage() {
                 {CONTACT.email}
               </a>
               {CONTACT.phone ? (
-                <a className="contact-line" href={`tel:${CONTACT.phone}`}>
+                <a className="contact-line" href={telHref(CONTACT.phone)}>
                   {CONTACT.phone}
                 </a>
               ) : null}
               <p className="contact-line contact-line--muted">{CONTACT.place}</p>
             </div>
 
-            {/* Only renders once there are real profiles to point at. */}
-            {social.length > 0 ? (
-              <div className="contact-block">
-                <p className="contact-label font-title">Social:</p>
-                <ul className="contact-social">
-                  {social.map((link) => (
-                    <li key={link.label}>
+            <div className="contact-block">
+              <p className="contact-label font-title">Social:</p>
+              <ul className="contact-social">
+                {CONTACT.social.map((link) => (
+                  <li key={link.label}>
+                    {/* Set as plain type until its profile URL lands in
+                        lib/contact.ts — a control that goes nowhere is worse
+                        than one that is not a link yet. */}
+                    {link.href ? (
                       <a
                         className="contact-social-link font-mono"
                         href={link.href}
@@ -57,11 +57,15 @@ export default function ContactPage() {
                       >
                         {link.label}
                       </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
+                    ) : (
+                      <span className="contact-social-link contact-social-link--idle font-mono">
+                        {link.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <ContactForm />

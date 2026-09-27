@@ -2013,6 +2013,17 @@ a.contact-line:hover {
   color: var(--ivory);
 }
 
+/* Waiting on its URL: it holds the row, but it does not pretend to be a link. */
+.contact-social-link--idle {
+  color: rgba(232, 230, 225, 0.4);
+}
+
+.contact-social-link--idle:hover {
+  border-color: rgba(232, 230, 225, 0.14);
+  background: rgba(232, 230, 225, 0.03);
+  color: rgba(232, 230, 225, 0.4);
+}
+
 /* ---- The form ---- */
 .form {
   margin-top: 4rem;
