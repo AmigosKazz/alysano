@@ -37,6 +37,40 @@ const DISCIPLINES = [
 const STATEMENT_A = "Where others hand over clean footage";
 const STATEMENT_B = "I hand over the film it was shot for.";
 
+/**
+ * The credit stamp: an editor's context menu over a line of type set as a
+ * selected clip. It sits beside a title rather than floating on its own, so
+ * the two stay together at every width.
+ */
+function Credit() {
+  return (
+    <div data-badge className="about-badge">
+      {/* The menu an editor lives in, where the film's credit would be. */}
+      <div data-menu className="about-menu" aria-hidden>
+        {MENU.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </div>
+      {/* The line is set twice: ivory on the black, black on the sweep.
+          One clip runs across both, so the selection reads as it lands. */}
+      <p className="about-credit font-title">
+        <span data-fill className="about-credit-fill" aria-hidden />
+        <span data-base className="about-credit-base">{CREDIT}</span>
+        <span data-ink className="about-credit-ink" aria-hidden>
+          {CREDIT}
+        </span>
+        <span data-grip className="about-credit-mark" aria-hidden />
+        <span
+          data-grip
+          data-grip-end
+          className="about-credit-mark about-credit-mark--end"
+          aria-hidden
+        />
+      </p>
+    </div>
+  );
+}
+
 /** Splits a line into word wrappers so each one can be masked or lit on its own. */
 function Words({ text, mask }: { text: string; mask?: boolean }) {
   return text.split(" ").map((word, i) => (
@@ -104,56 +138,63 @@ export function AboutStage() {
         }
       });
 
-      // The credit is typed out the way it would be selected: the line arrives
+      // Each credit is typed out the way it would be selected: the line arrives
       // plain, a selection sweeps across it left to right with the far grip
       // riding its edge, and only once it has landed does the menu answer.
-      const credit = root.querySelector<HTMLElement>(".about-credit");
+      // One timeline per stamp, played off the movement it belongs to.
       const sweep = 0.55;
 
-      gsap
-        .timeline({ defaults: { ease: "none" } })
-        .fromTo(
-          "[data-badge]",
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
-          0,
-        )
-        .fromTo(
-          "[data-grip]",
-          { opacity: 0, scale: 0.4 },
-          { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" },
-          0.55,
-        )
-        // Fill and black ink share one edge; the ivory copy is cut away behind it.
-        .fromTo(
-          "[data-fill], [data-ink]",
-          { clipPath: "inset(0% 100% 0% 0%)" },
-          { clipPath: "inset(0% 0% 0% 0%)", duration: sweep, ease: "power2.inOut" },
-          0.6,
-        )
-        .fromTo(
-          "[data-base]",
-          { clipPath: "inset(0% 0% 0% 0%)" },
-          { clipPath: "inset(0% 0% 0% 100%)", duration: sweep, ease: "power2.inOut" },
-          0.6,
-        )
-        // The trailing grip travels with that edge and stops on the right corner.
-        .fromTo(
-          "[data-grip-end]",
-          { x: 0 },
-          {
-            x: () => (credit ? credit.offsetWidth : 0),
-            duration: sweep,
-            ease: "power2.inOut",
-          },
-          0.6,
-        )
-        .fromTo(
-          "[data-menu]",
-          { opacity: 0, y: 5, scale: 0.97 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "power3.out" },
-          0.6 + sweep + 0.12,
-        );
+      gsap.utils.toArray<HTMLElement>("[data-badge]", root).forEach((badge) => {
+        const line = badge.querySelector<HTMLElement>(".about-credit");
+
+        gsap
+          .timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: { trigger: badge.closest(".about-head"), start: "top 68%" },
+          })
+          .fromTo(
+            badge,
+            { opacity: 0, y: 8 },
+            { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+            0,
+          )
+          .fromTo(
+            badge.querySelectorAll("[data-grip]"),
+            { opacity: 0, scale: 0.4 },
+            { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" },
+            0.55,
+          )
+          // Fill and black ink share one edge; the ivory copy is cut away behind it.
+          .fromTo(
+            badge.querySelectorAll("[data-fill], [data-ink]"),
+            { clipPath: "inset(0% 100% 0% 0%)" },
+            { clipPath: "inset(0% 0% 0% 0%)", duration: sweep, ease: "power2.inOut" },
+            0.6,
+          )
+          .fromTo(
+            badge.querySelectorAll("[data-base]"),
+            { clipPath: "inset(0% 0% 0% 0%)" },
+            { clipPath: "inset(0% 0% 0% 100%)", duration: sweep, ease: "power2.inOut" },
+            0.6,
+          )
+          // The trailing grip travels with that edge and stops on the right corner.
+          .fromTo(
+            badge.querySelectorAll("[data-grip-end]"),
+            { x: 0 },
+            {
+              x: () => (line ? line.offsetWidth : 0),
+              duration: sweep,
+              ease: "power2.inOut",
+            },
+            0.6,
+          )
+          .fromTo(
+            badge.querySelectorAll("[data-menu]"),
+            { opacity: 0, y: 5, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "power3.out" },
+            0.6 + sweep + 0.12,
+          );
+      });
 
 
       // The photographs drift inside their frames for as long as they are in view.
@@ -200,40 +241,7 @@ export function AboutStage() {
 
   return (
     <div ref={rootRef} className="about-stage">
-      {/* The two movements share one pinned credit, so it has to share their box. */}
       <div className="about-reel">
-        {/* The box the credit is free to travel in: it holds at the top of the
-            window while the opening frame passes, then scrolls off with the
-            second title rather than being switched off. */}
-        <div className="about-pin-range">
-          <div className="about-pin">
-            <div data-badge className="about-badge">
-              {/* The menu an editor lives in, where the film's credit would be. */}
-              <div data-menu className="about-menu" aria-hidden>
-                {MENU.map((item) => (
-                  <span key={item}>{item}</span>
-                ))}
-              </div>
-              {/* The line is set twice: ivory on the black, black on the sweep.
-                  One clip runs across both, so the selection reads as it lands. */}
-              <p className="about-credit font-title">
-                <span data-fill className="about-credit-fill" aria-hidden />
-                <span data-base className="about-credit-base">{CREDIT}</span>
-                <span data-ink className="about-credit-ink" aria-hidden>
-                  {CREDIT}
-                </span>
-                <span data-grip className="about-credit-mark" aria-hidden />
-                <span
-                  data-grip
-                  data-grip-end
-                  className="about-credit-mark about-credit-mark--end"
-                  aria-hidden
-                />
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* ------------------------------ opening ------------------------------ */}
         <section data-movement className="about-m1">
           <figure data-frame className="about-m1-figure">
@@ -260,7 +268,12 @@ export function AboutStage() {
               </video>
             </div>
 
-            {/* Two lines: one would run under the credit that hangs beside it. */}
+          </figure>
+
+          {/* Title and credit read as one line across the picture. The row sits
+              outside the frame, not in it: the frame clips its overflow, and
+              that would pin the credit in place instead of letting it ride. */}
+          <div className="about-head about-head--m1">
             <h1 className="about-m1-title font-title">
               <span className="about-m1-line">
                 <Words text="Direction &" mask />
@@ -269,7 +282,9 @@ export function AboutStage() {
                 <Words text="Post-production" mask />
               </span>
             </h1>
-          </figure>
+
+            <Credit />
+          </div>
 
           <div className="about-side">
             <ul data-fade className="about-facts">
@@ -294,9 +309,11 @@ export function AboutStage() {
 
         {/* ------------------------------ the frame ------------------------------ */}
         <section data-movement className="about-m2">
-          <h2 className="about-m2-title font-title">
-            <Words text="Production design" mask />
-          </h2>
+          <div className="about-head about-head--m2">
+            <h2 className="about-m2-title font-title">
+              <Words text="Production design" mask />
+            </h2>
+          </div>
 
           <figure data-frame className="about-m2-figure">
             <div data-photo className="about-photo">

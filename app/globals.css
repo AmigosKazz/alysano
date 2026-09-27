@@ -2424,10 +2424,8 @@ html.has-cursor video {
   }
 }
 
-/* --- the credit that rides over both movements --------------------- */
-/* The three measurements the opening row is built from. They live here
-   because the credit has to solve for the same picture the row lays out —
-   see `.about-pin-range`. */
+/* --- the title line, and the credit that sits on it ----------------- */
+/* The three measurements the opening row is built from. */
 .about-reel {
   position: relative;
   --about-side: clamp(260px, 22vw, 420px);
@@ -2435,32 +2433,32 @@ html.has-cursor video {
   --about-edge: max(1.75rem, calc((100vw - 1680px) / 2 + 1.75rem));
 }
 
-/* The distance the credit is allowed to travel. It ends level with the second
-   title, so the credit holds at the top of the window for the whole opening
-   frame and then simply scrolls off — it is never switched off mid-page. */
-.about-pin-range {
-  position: absolute;
-  top: 0;
-  inset-inline: 0;
-  height: calc(22svh + 62vw + 16svh);
+/* Title left, credit right, both set on the same centre line. They are
+   siblings rather than two things positioned to meet, so they stay beside
+   each other at every width instead of only at the one it was tuned for. */
+.about-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(0.75rem, 3vw, 4rem);
+  /* The row is drawn over the picture; only what it holds should catch the
+     pointer, so the empty span between title and credit stays transparent. */
   pointer-events: none;
 }
 
-/* Height zero so it takes no room: it only has to hold a position while the
-   opening frame passes underneath it. */
-.about-pin {
-  position: sticky;
-  top: 15svh;
-  z-index: 5;
-  height: 0;
+.about-head > * {
+  pointer-events: auto;
 }
 
+/* Sticky inside its own row: the credit lands level with the title, holds at
+   the top of the window while the movement scrolls past, and leaves with the
+   row rather than being switched off. */
 .about-badge {
-  position: absolute;
-  left: 41%;
-  transform: translateX(-50%);
+  position: sticky;
+  top: 17svh;
+  flex: none;
   width: max-content;
-  max-width: 92vw;
+  max-width: 100%;
 }
 
 /* The menu an editor lives inside, drawn where a film's credit card would be. */
@@ -2596,17 +2594,24 @@ html.has-cursor video {
   pointer-events: none;
 }
 
-/* The title sits on the picture's dark quarter — the only overlap on the page. */
+/* The row sits on the picture's dark quarter — the only overlap on the page. */
 .about-m1-line {
   display: block;
 }
 
-.about-m1-title {
+/* Measured off the picture it is laid over: the frame's own top plus the
+   same 8% the title used to sit at, and as tall as what is left of it. */
+.about-head--m1 {
   position: absolute;
-  top: 8%;
+  top: calc(22svh + 0.05 * (100vw - 2.5rem));
   left: 3%;
+  right: 3%;
+  height: calc(0.575 * (100vw - 2.5rem));
   z-index: 2;
-  max-width: 92%;
+}
+
+.about-m1-title {
+  flex: 0 1 auto;
   font-size: clamp(1.75rem, 6.2vw, 4rem);
   line-height: 0.9;
   letter-spacing: 0.01em;
@@ -2780,31 +2785,29 @@ html.has-cursor video {
     padding: 0 1.75rem;
   }
 
-  /* The picture takes the left two thirds and stands nearly the full window;
-     the reading column is pushed to the right margin and set on its bottom. */
-  .about-pin-range {
-    height: calc(100svh + 14svh);
+  /* The row stops short of the picture's right edge, so the credit lands on
+     the open wall beside the subject rather than across him. Top and height
+     are measured off the frame below it — 12svh of padding plus 8% of an
+     85svh picture — so the title still sits where it did. */
+  .about-head--m1 {
+    top: 18.8svh;
+    left: 1.6%;
+    /* Everything the picture is not, plus an inset inside it — the row is laid
+       over a full-bleed box now, so it has to solve for the picture's own
+       right edge rather than a share of the window. */
+    right: calc(var(--about-side) + var(--about-gutter) + var(--about-edge) + 13%);
+    /* Runs all the way down to the second title's own line, so the credit
+       holds at the top of the window for the whole opening movement and only
+       lets go once it is sitting beside PRODUCTION DESIGN: the opening block
+       (112svh) plus that title's top padding (12svh), less this row's own
+       start (18.8svh), plus half a title line to centre on it. */
+    height: calc(105.2svh + 3.2rem);
   }
 
-  .about-pin {
-    top: 21svh;
-  }
-
-  /* Breaks out to the window and is then inset by everything the picture is
-     not — the reading column, the gutter, the page's right margin. What is
-     left is the picture's own box, so the credit's `left` below reads as a
-     position across the picture at any width. */
-  .about-pin-range {
-    inset-inline: auto;
-    left: 50%;
-    width: 100vw;
-    margin-left: -50vw;
-    padding-right: calc(var(--about-side) + var(--about-gutter) + var(--about-edge));
-  }
-
+  /* Dropped onto the title's centre line: the row aligns them at the top, and
+     the title is the taller of the two. */
   .about-badge {
-    left: 70%;
-    transform: translateX(-50%);
+    margin-top: 0.8rem;
   }
 
   /* A full window: the second title stays under the fold until the opening
@@ -2835,8 +2838,6 @@ html.has-cursor video {
   }
 
   .about-m1-title {
-    top: 8%;
-    left: 1.6%;
     font-size: clamp(2.25rem, 3.2vw, 4rem);
   }
 
@@ -2854,13 +2855,22 @@ html.has-cursor video {
     padding-top: 12svh;
   }
 
+  /* The title row runs across the first two tracks, so its credit lands over
+     the picture's column the way the opening one does. */
+  .about-head--m2 {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    padding-right: 6%;
+  }
+
   .about-m2-title {
-    grid-column: 1;
+    flex: none;
     font-size: clamp(2.25rem, 3.2vw, 4rem);
   }
 
   .about-m2-figure {
     grid-column: 2;
+    grid-row: 2;
     margin-top: 12svh;
   }
 
@@ -2868,6 +2878,7 @@ html.has-cursor video {
      its bottom edge. */
   .about-quote {
     grid-column: 3;
+    grid-row: 1 / 3;
     display: flex;
     flex-direction: column;
     align-self: stretch;
@@ -2916,12 +2927,23 @@ html.has-cursor video {
     padding-top: 22svh;
   }
 
-  .about-pin {
-    top: 14svh;
+  .about-badge {
+    top: 12svh;
   }
 
-  .about-badge {
-    left: 50%;
+  /* The credit shrinks to the measure a phone leaves beside the title — it is
+     technical metadata, and it has to fit on the line rather than push the
+     title off it. */
+  .about-credit {
+    font-size: clamp(0.5625rem, 2.5vw, 0.8125rem);
+  }
+
+  .about-menu {
+    font-size: clamp(0.5rem, 2.1vw, 0.6875rem);
+  }
+
+  .about-menu span {
+    padding: 0.5em 0.7em;
   }
 
   .about-side {
