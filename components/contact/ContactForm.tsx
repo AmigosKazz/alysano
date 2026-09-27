@@ -8,34 +8,21 @@ import { CONTACT } from "@/lib/contact";
 type Field = {
   name: string;
   label: string;
-  placeholder: string;
   type?: string;
   required?: boolean;
   autoComplete?: string;
 };
 
-/** Two to a row on desktop, in the order the reference reads them. */
+/** Two to a row: who it is and where to answer, then how else to reach them. */
 const FIELDS: Field[] = [
-  { name: "name", label: "Name", placeholder: "John", required: true, autoComplete: "given-name" },
-  {
-    name: "surname",
-    label: "Surname",
-    placeholder: "Doe",
-    required: true,
-    autoComplete: "family-name",
-  },
-  { name: "company", label: "Company", placeholder: "Studio", autoComplete: "organization" },
-  { name: "role", label: "Job title", placeholder: "Producer", autoComplete: "organization-title" },
-  {
-    name: "email",
-    label: "Email",
-    placeholder: "john@example.com",
-    type: "email",
-    required: true,
-    autoComplete: "email",
-  },
-  { name: "phone", label: "Phone", placeholder: "+261 00 000 00", type: "tel", autoComplete: "tel" },
+  { name: "name", label: "Name", required: true, autoComplete: "name" },
+  { name: "email", label: "Email", type: "email", required: true, autoComplete: "email" },
+  { name: "phone", label: "Phone", type: "tel", autoComplete: "tel" },
+  { name: "company", label: "Company", autoComplete: "organization" },
 ];
+
+/** The bracket the rest of the page puts around a piece of metadata. */
+const cue = (field: Field) => `[  ${field.label}${field.required ? "*" : ""}  ]`;
 
 /**
  * No backend to speak to, so the form composes the message and hands it to the
@@ -67,13 +54,12 @@ export function ContactForm() {
     const data = new FormData(event.currentTarget);
     const value = (key: string) => String(data.get(key) ?? "").trim();
 
-    const subject = `Project enquiry — ${value("name")} ${value("surname")}`.trim();
+    const subject = `Project enquiry — ${value("name")}`.trim();
     const body = [
-      `Name: ${value("name")} ${value("surname")}`,
-      value("company") && `Company: ${value("company")}`,
-      value("role") && `Job title: ${value("role")}`,
+      `Name: ${value("name")}`,
       `Email: ${value("email")}`,
       value("phone") && `Phone: ${value("phone")}`,
+      value("company") && `Company: ${value("company")}`,
       "",
       value("message"),
     ]
@@ -87,23 +73,19 @@ export function ContactForm() {
   };
 
   return (
-    <form ref={formRef} className="form" onSubmit={submit} noValidate={false}>
+    <form ref={formRef} className="form" onSubmit={submit}>
       <div className="form-grid">
         {FIELDS.map((field) => (
           <p key={field.name} data-row className="field">
-            <label className="field-label" htmlFor={field.name}>
+            {/* The cue carries the label, so this one is for screen readers. */}
+            <label className="sr-only" htmlFor={field.name}>
               {field.label}
-              {field.required ? (
-                <span className="field-mark" aria-hidden="true">
-                  *
-                </span>
-              ) : null}
             </label>
             <input
               id={field.name}
               name={field.name}
               type={field.type ?? "text"}
-              placeholder={field.placeholder}
+              placeholder={cue(field)}
               required={field.required}
               autoComplete={field.autoComplete}
               className="field-input"
@@ -112,21 +94,26 @@ export function ContactForm() {
         ))}
 
         <p data-row className="field field-wide">
-          <label className="field-label" htmlFor="message">
+          <label className="sr-only" htmlFor="message">
             Message
           </label>
           <textarea
             id="message"
             name="message"
             rows={3}
-            placeholder="What are we cutting?"
+            placeholder="Message"
             className="field-input field-area"
           />
         </p>
       </div>
 
+      <p data-row className="form-consent">
+        <input id="consent" name="consent" type="checkbox" required className="field-check" />
+        <label htmlFor="consent">I agree to be contacted about this enquiry.</label>
+      </p>
+
       <div data-row className="form-action">
-        <CtaButton type="submit" label="Send" />
+        <CtaButton type="submit" label="Send request" className="cta--block" />
         <span role="status" className="form-status font-mono">
           {sent ? "Opening your mail app…" : ""}
         </span>

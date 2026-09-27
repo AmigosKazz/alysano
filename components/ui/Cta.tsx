@@ -34,9 +34,9 @@ type Props = ComponentProps<typeof Link> & { label: string };
  * The page's forward action, carrying the same steel-blue square as the header's
  * CONTACT call. Shared so every one of them stays the same control.
  */
-export function Cta({ label, ...props }: Props) {
+export function Cta({ label, className, ...props }: Props) {
   return (
-    <Link {...props} className="cta font-mono">
+    <Link {...props} className={`cta font-mono${className ? ` ${className}` : ""}`}>
       <Face label={label} />
     </Link>
   );
@@ -45,9 +45,9 @@ export function Cta({ label, ...props }: Props) {
 type ButtonProps = ComponentProps<"button"> & { label: string };
 
 /** The same control where the action submits rather than navigates. */
-export function CtaButton({ label, ...props }: ButtonProps) {
+export function CtaButton({ label, className, ...props }: ButtonProps) {
   return (
-    <button {...props} className="cta font-mono">
+    <button {...props} className={`cta font-mono${className ? ` ${className}` : ""}`}>
       <Face label={label} />
     </button>
   );

@@ -9,48 +9,62 @@ export const metadata: Metadata = {
 };
 
 /**
- * The page the invitation leads to. The word fills the top edge to edge, the form
- * sits under its left half, and the details hold the right margin — the same
- * asymmetry the rest of the site is built on.
+ * The invitation, set as a brief: what the work is and how to reach him on the
+ * left, the form itself out on the right margin. The band of black between the
+ * two columns is the point — the page asks for one thing at a time.
  */
 export default function ContactPage() {
+  const social = CONTACT.social.filter((link) => link.href);
+
   return (
     <main>
       <div className="page-cover">
         <section className="contact-page">
-          <h1 className="contact-page-title font-title">Contact</h1>
+          <div className="contact-lede">
+            <h1 className="contact-title font-title">Start a project</h1>
 
-          <div className="contact-page-body">
-            <ContactForm />
+            <p className="contact-intro">
+              Directors, labels, agencies and brands — from a single cut to a full
+              post-production pass. Say what you are making, where it is now, and
+              when it has to be finished.
+            </p>
 
-            <aside className="contact-page-info">
-              <div className="info-block">
-                <p className="info-label font-mono">Based in</p>
-                <p className="info-value">{CONTACT.place}</p>
-              </div>
-
+            <div className="contact-block">
+              <p className="contact-label font-title">Prefer to reach out directly?</p>
+              <a className="contact-line" href={`mailto:${CONTACT.email}`}>
+                {CONTACT.email}
+              </a>
               {CONTACT.phone ? (
-                <div className="info-block">
-                  <p className="info-label font-mono">Phone</p>
-                  <a className="info-value info-link" href={`tel:${CONTACT.phone}`}>
-                    {CONTACT.phone}
-                  </a>
-                </div>
-              ) : null}
-
-              <div className="info-block">
-                <p className="info-label font-mono">Email</p>
-                <a className="info-value info-link" href={`mailto:${CONTACT.email}`}>
-                  {CONTACT.email}
+                <a className="contact-line" href={`tel:${CONTACT.phone}`}>
+                  {CONTACT.phone}
                 </a>
-              </div>
+              ) : null}
+              <p className="contact-line contact-line--muted">{CONTACT.place}</p>
+            </div>
 
-              <div className="info-block">
-                <p className="info-label font-mono">Available</p>
-                <p className="info-value">For select projects, 2026</p>
+            {/* Only renders once there are real profiles to point at. */}
+            {social.length > 0 ? (
+              <div className="contact-block">
+                <p className="contact-label font-title">Social:</p>
+                <ul className="contact-social">
+                  {social.map((link) => (
+                    <li key={link.label}>
+                      <a
+                        className="contact-social-link font-mono"
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </aside>
+            ) : null}
           </div>
+
+          <ContactForm />
         </section>
       </div>
     </main>

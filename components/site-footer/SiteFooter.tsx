@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 const PAGES = [
-  { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "work" },
+  { label: "About", href: "about" },
+  { label: "Contact", href: "contact" },
 ];
 
 /**

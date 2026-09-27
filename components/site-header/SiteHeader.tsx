@@ -7,8 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { INTRO_EVENT } from "@/lib/intro";
 
 const NAV = [
-  { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
+  { label: "Work", href: "work" },
+  { label: "About", href: "about" },
 ];
 
 /** Drawn twice inside the accent square so one can roll out as the other arrives. */

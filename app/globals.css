@@ -1922,9 +1922,10 @@ html.has-cursor video {
 }
 
 /* ------------------------------------------------------------------
-   Contact page — the word fills the top edge to edge, the form sits
-   under its left half and the details hold the right margin. Fields
-   are wells cut into the black rather than cards laid on it.
+   Contact page — set as a brief. The invitation and the ways to reach
+   him hold the left column, the form is pushed out to the right
+   margin, and the band of black between them is the point. Fields are
+   ruled lines rather than boxes: the page asks, it does not enclose.
 ------------------------------------------------------------------ */
 .contact-page {
   /* At least a full window: any shorter and the footer, which waits underneath,
@@ -1932,106 +1933,223 @@ html.has-cursor video {
   min-height: 100svh;
   max-width: 1680px;
   margin: 0 auto;
-  padding: 18svh 1.25rem 10svh;
+  padding: 18svh 1.25rem 12svh;
 }
 
-.contact-page-title {
-  font-size: 10vw;
-  line-height: 0.82;
+/* ---- The left column ---- */
+.contact-title {
+  font-size: clamp(2.5rem, 9vw, 4.25rem);
+  line-height: 0.92;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-  text-align: center;
-  white-space: nowrap;
   color: var(--ivory);
 }
 
-.contact-page-body {
-  display: grid;
-  gap: 4rem;
-  margin-top: 9svh;
+.contact-intro {
+  margin-top: 1.75rem;
+  max-width: 34ch;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.45;
+  color: var(--muted);
 }
 
-/* ---- Form ---- */
-/* Two to a row at every width, phones included — stacking them would turn the
-   form into a column of six wells and push the send button off the screen. */
+.contact-block {
+  margin-top: 3.5rem;
+}
+
+/* The one coloured line in the column, and the only place the accent is
+   asked to carry type rather than a mark. */
+.contact-label {
+  margin-bottom: 1.25rem;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--steel-blue);
+}
+
+.contact-line {
+  display: block;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--ivory);
+  transition: color 0.4s ease;
+}
+
+a.contact-line:hover {
+  color: var(--steel-blue);
+}
+
+.contact-line--muted {
+  margin-top: 0.75rem;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.contact-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* Framed the way the header's CONTACT call is — a control, not a link in a
+   sentence. */
+.contact-social-link {
+  display: inline-block;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid rgba(232, 230, 225, 0.14);
+  background: rgba(232, 230, 225, 0.03);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.82);
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+.contact-social-link:hover {
+  border-color: rgba(232, 230, 225, 0.4);
+  background: rgba(232, 230, 225, 0.06);
+  color: var(--ivory);
+}
+
+/* ---- The form ---- */
+.form {
+  margin-top: 4rem;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem 0.7rem;
+  gap: 2.25rem 2rem;
 }
 
 .field-wide {
   grid-column: 1 / -1;
 }
 
-/* Narrower than this and two fields stop taking a readable placeholder. */
-@media (max-width: 359px) {
+/* Narrower than this and two fields stop taking a readable cue. */
+@media (max-width: 400px) {
   .form-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-
-.field-label {
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  color: rgba(232, 230, 225, 0.82);
-}
-
-/* The only mark on the page that is not ivory — it has one job. */
-.field-mark {
-  margin-left: 0.3em;
-  color: var(--steel-blue);
-}
-
+/* A ruled line, not a well: the field is the space above the rule. */
 .field-input {
   width: 100%;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid rgba(232, 230, 225, 0.09);
-  border-radius: 3px;
-  background: rgba(232, 230, 225, 0.05);
-  font-size: 13px;
+  padding: 0 0 0.85rem;
+  border: 0;
+  border-bottom: 1px solid rgba(232, 230, 225, 0.18);
+  border-radius: 0;
+  background: transparent;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
   line-height: 1.5;
   color: var(--ivory);
+  transition: border-color 0.4s ease;
+}
+
+.field-input::placeholder {
+  color: rgba(232, 230, 225, 0.38);
+}
+
+.field-input:hover {
+  border-bottom-color: rgba(232, 230, 225, 0.32);
+}
+
+.field-input:focus {
+  outline: none;
+  border-bottom-color: var(--steel-blue);
+}
+
+.field-input:user-invalid {
+  border-bottom-color: rgba(185, 165, 138, 0.6);
+}
+
+.field-area {
+  min-height: 96px;
+  padding-top: 0.5rem;
+  resize: vertical;
+}
+
+.form-consent {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 2.75rem;
+  font-size: clamp(0.8125rem, 0.95vw, 0.9375rem);
+  color: rgba(232, 230, 225, 0.72);
+}
+
+/* Drawn rather than native, so it reads as one of the page's own marks. */
+.field-check {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 1px solid rgba(232, 230, 225, 0.35);
+  border-radius: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
   transition:
     border-color 0.4s ease,
     background-color 0.4s ease;
 }
 
-.field-input::placeholder {
-  color: rgba(232, 230, 225, 0.28);
+.field-check:hover {
+  border-color: rgba(232, 230, 225, 0.6);
 }
 
-.field-input:hover {
-  background: rgba(232, 230, 225, 0.055);
+.field-check:checked {
+  border-color: var(--steel-blue);
+  background: var(--steel-blue);
 }
 
-.field-input:focus {
-  outline: none;
-  border-color: rgba(143, 169, 184, 0.55);
-  background: rgba(232, 230, 225, 0.06);
-}
-
-.field-input:user-invalid {
-  border-color: rgba(185, 165, 138, 0.5);
-}
-
-.field-area {
-  min-height: 72px;
-  padding-block: 0.5rem;
-  resize: vertical;
+.field-check:focus-visible {
+  outline: 1px solid var(--steel-blue);
+  outline-offset: 2px;
 }
 
 .form-action {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  margin-top: 1.9rem;
+  margin-top: 2.5rem;
+}
+
+/* The page's one heavy control: the same steel square the header carries,
+   with the label set in a frame beside it rather than on a rule. */
+.cta--block {
+  gap: 0;
+}
+
+.cta--block .cta-label {
+  padding: 1.05rem 2.5rem;
+  border: 1px solid rgba(232, 230, 225, 0.18);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--ivory);
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.cta--block:hover .cta-label,
+.cta--block:focus-visible .cta-label {
+  border-color: rgba(232, 230, 225, 0.4);
+  background: rgba(232, 230, 225, 0.04);
+}
+
+/* The rule under the label belongs to the inline control, not to this one. */
+.cta--block .cta-label::after {
+  content: none;
+}
+
+.cta--block .cta-arrow {
+  width: 48px;
+  align-self: stretch;
+  height: auto;
 }
 
 .form-status {
@@ -2041,86 +2159,39 @@ html.has-cursor video {
   color: rgba(232, 230, 225, 0.45);
 }
 
-/* ---- The right margin ---- */
-.contact-page-info {
-  display: grid;
-  gap: 1.6rem;
-  align-content: start;
-}
-
-.info-label {
-  margin-bottom: 0.5rem;
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(232, 230, 225, 0.45);
-}
-
-.info-value {
-  font-size: 13px;
-  color: var(--ivory);
-}
-
-.info-link {
-  transition: color 0.4s ease;
-}
-
-.info-link:hover {
-  color: var(--steel-blue);
-}
-
 /* On a phone the fields carry 16px: any smaller and iOS zooms the whole page in
-   the moment one takes focus. The desktop scale picks up again past this. */
+   the moment one takes focus. */
 @media (max-width: 759px) {
   .contact-page {
-    padding-top: 14svh;
-  }
-
-  /* The word has to hold the top of a phone screen the way it holds the top of a
-     window — at the desktop size it would read as a caption. */
-  .contact-page-title {
-    font-size: 20vw;
-  }
-
-  .field-label {
-    font-size: 14px;
+    padding-top: 15svh;
   }
 
   .field-input {
-    padding: 0.45rem 0.7rem;
     font-size: 16px;
   }
 
   .form-grid {
-    gap: 1.25rem 0.6rem;
-  }
-
-  .contact-page-body {
-    gap: 5rem;
-  }
-}
-
-@media (min-width: 760px) {
-  .form-grid {
-    gap: 1.4rem 1rem;
+    gap: 1.9rem 1.25rem;
   }
 }
 
 @media (min-width: 1100px) {
   .contact-page {
+    display: grid;
+    grid-template-columns: minmax(0, 26%) minmax(0, 50%);
+    justify-content: space-between;
+    align-items: start;
     padding-inline: 2.5rem;
   }
 
-  /* The form keeps to the left half, the details to the right quarter, and the
-     empty band between them is the point. */
-  .contact-page-body {
-    grid-template-columns: minmax(0, 48.5%) minmax(0, 24%);
-    justify-content: space-between;
+  /* The form starts on the same line as the question it answers. */
+  .form {
+    margin-top: 0;
+    padding-top: 15svh;
   }
 
-  .contact-page-info {
-    justify-items: start;
-    padding-top: 0.5rem;
+  .contact-intro {
+    text-align: justify;
   }
 }
 
