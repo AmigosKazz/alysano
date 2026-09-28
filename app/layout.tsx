@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, Geist_Mono, Manrope } from "next/font/google";
 import { Cursor } from "@/components/cursor/Cursor";
+import { SmoothScroll } from "@/components/ui/SmoothScroll";
 import { SiteFooter } from "@/components/site-footer/SiteFooter";
 import { SiteHeader } from "@/components/site-header/SiteHeader";
 import "./globals.css";
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: "document.documentElement.classList.add('js')",
           }}
         />
+        <SmoothScroll />
         <SiteHeader />
         {children}
         <SiteFooter />

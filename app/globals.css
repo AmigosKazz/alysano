@@ -1259,253 +1259,208 @@ main {
 }
 
 /* ------------------------------------------------------------------
-   Services — the room, and six lines over it. The photograph is held
-   well under the type so it reads as atmosphere rather than a picture
-   behind text; the list sits in the pool of light on its left.
+   Services — four lines on a black stage, read one at a time. The
+   stack rides the scroll: whichever line reaches the reading height
+   comes into focus and full size, the rest fall back dim and out of
+   focus. A rack focus, done to type.
 ------------------------------------------------------------------ */
-/* No top padding: this is the direct continuation of Figures, not a new section
-   with a gap before it — the kicker sits flush under the last row of cards. */
+/* The height is the scroll the reading takes — the stage inside holds the
+   window while it happens. */
 .services {
   position: relative;
-  isolation: isolate;
+  height: 320svh;
+  background: var(--black);
+}
+
+.services-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
   overflow: hidden;
-  padding: 0 1.25rem 7rem;
+  padding: 0 1.25rem;
 }
 
-/* Drawn taller than the section so it can drift without opening an edge. */
-.services-media {
+.services-head {
   position: absolute;
-  inset: -6% 0;
-  z-index: -1;
-  opacity: 0.38;
-  will-change: transform;
-}
-
-.services-photo {
-  object-fit: cover;
-  object-position: 66% 42%;
-}
-
-/* Black from the left, so the type always has ground under it and the
-   silhouette is the only thing that survives on the right. */
-.services-scrim {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      to right,
-      var(--black) 0%,
-      rgba(8, 10, 12, 0.82) 34%,
-      rgba(8, 10, 12, 0.25) 78%,
-      rgba(8, 10, 12, 0.45) 100%
-    ),
-    linear-gradient(to bottom, var(--black) 0%, rgba(8, 10, 12, 0) 26%),
-    linear-gradient(to top, var(--black) 0%, rgba(8, 10, 12, 0) 24%);
-}
-
-/* The section itself still starts flush under the figures — the photograph is meant
-   to pick up with no seam. Only the type is held down off the cards above it. */
-.services-inner {
-  max-width: 1680px;
-  margin: 0 auto;
-  padding-top: 5rem;
+  top: 12svh;
+  left: 1.25rem;
+  right: 1.25rem;
+  z-index: 2;
 }
 
 .services-kicker {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  font-size: 9px;
-  letter-spacing: 0.24em;
+  font-size: clamp(1rem, 1.6vw, 1.375rem);
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: rgba(232, 230, 225, 0.62);
+  color: var(--ivory);
 }
 
-.services-kicker::before {
-  content: "";
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ivory);
+.services-lede {
+  margin-top: 0.85rem;
+  max-width: 30ch;
+  font-size: clamp(0.75rem, 0.9vw, 0.875rem);
+  line-height: 1.5;
+  color: rgba(232, 230, 225, 0.42);
 }
 
+/* One row per line, all the same height: the focus and the size are carried by
+   transforms, so the rhythm of the stack never moves. */
+/* Hung so that the first line already sits on the reading height — the scroll
+   then slides the whole stack up through it, one row at a time. */
 .services-list {
-  margin-top: 3rem;
-}
-
-.service {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas:
-    "index name"
-    ".     detail";
-  column-gap: 1.1rem;
-  row-gap: 0.45rem;
-  padding: 1.15rem 0 1.35rem;
-}
-
-.service-rule {
+  --service-row: clamp(4.5rem, 23svh, 14rem);
   position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 1px;
-  background: rgba(232, 230, 225, 0.14);
-  transform-origin: left;
-  transition: background-color 0.5s ease;
+  top: calc(50svh - var(--service-row) / 2);
+  inset-inline: 1.25rem;
+  z-index: 1;
+}
+
+/* Centred on the page, all four of them: the stack reads as one column of
+   type on the middle line rather than a list hung off the left margin. */
+.service {
+  display: flex;
+  justify-content: center;
+  height: var(--service-row);
+  transform-origin: center center;
+  will-change: transform, filter, opacity;
+}
+
+/* Sized to its own name, so the index and the detail can hang off its two
+   edges without pulling the name off the centre line. */
+.service-line {
+  position: relative;
+  display: block;
 }
 
 .service-index {
-  grid-area: index;
-  padding-top: 0.5em;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  color: rgba(232, 230, 225, 0.35);
-  transition: color 0.45s ease;
-}
-
-/* Padded so the stroke's ascenders and descenders survive the mask, then pulled
-   back out again so the row height is the line box and nothing else. The opening
-   translate below has to clear this padding too, or the type shows through it. */
-.service-mask {
-  grid-area: name;
-  display: block;
-  overflow: hidden;
-  padding: 0.2em 0 0.34em;
-  margin: -0.2em 0 -0.34em;
+  position: absolute;
+  top: 0.35em;
+  right: 100%;
+  margin-right: 0.5em;
+  font-size: clamp(0.5rem, 0.72vw, 0.6875rem);
+  letter-spacing: 0.06em;
+  color: var(--steel-blue);
 }
 
 .service-name {
-  position: relative;
-  display: block;
-  font-size: clamp(1.75rem, 7.6vw, 4.25rem);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.025em;
-  will-change: transform;
-}
-
-/* Hollow at rest: the photograph reads straight through the letterforms. */
-.service-outline {
-  display: block;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(232, 230, 225, 0.34);
-}
-
-/* Without a stroke to draw, transparent fill would leave the row blank. */
-@supports not (-webkit-text-stroke: 1px currentColor) {
-  .service-outline {
-    color: rgba(232, 230, 225, 0.34);
-  }
-}
-
-.service-fill {
-  position: absolute;
-  inset: 0;
-  color: var(--ivory);
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.service-detail {
-  grid-area: detail;
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-size: clamp(1.75rem, 9.5vw, 10rem);
+  line-height: 0.88;
+  letter-spacing: 0.005em;
   text-transform: uppercase;
-  color: rgba(232, 230, 225, 0.45);
+  white-space: nowrap;
+  color: var(--ivory);
 }
 
-/* `[data-kicker]` already opens hidden — see the selected-work block above. */
-.js .services [data-rule] {
-  transform: scaleX(0);
+/* Hung off the right end of the name, the way a slate carries its own line —
+   two short lines of it, set tight. */
+.service-detail {
+  display: block;
+  max-width: 62ch;
+  margin-top: 0.45rem;
+  margin-left: auto;
+  font-size: clamp(0.4375rem, 0.62vw, 0.625rem);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-align: right;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.5);
 }
 
-.js .services [data-name] {
-  transform: translateY(142%);
+/* Set low on the stage and to the measure of the names above it, so it reads
+   as the line under the list rather than a caption floating in the middle. */
+.services-statement {
+  position: absolute;
+  inset-inline: 1.25rem;
+  bottom: 11svh;
+  z-index: 2;
+  max-width: min(66vw, 1100px);
+  margin-inline: auto;
+  font-size: clamp(0.8125rem, 1.15vw, 1.1875rem);
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(232, 230, 225, 0.62);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .js .services [data-rule],
-  .js .services [data-name] {
-    transform: none;
-  }
-
-  .service-fill {
-    clip-path: inset(0 0 0 0);
-    transition: none;
-  }
-
-  .service-rule,
-  .service-index {
-    transition: none;
-  }
+.js .services [data-fade] {
+  opacity: 0;
 }
 
 @media (min-width: 900px) {
-  .services {
-    padding: 0 1.25rem 11svh;
+  .services-stage {
+    padding-inline: 2.5rem;
   }
 
-  .services-inner {
-    padding-top: 9svh;
+  .services-head {
+    left: 2.5rem;
+    right: 2.5rem;
   }
 
   .services-list {
-    margin-top: 4.5rem;
+    inset-inline: 2.5rem;
   }
 
-  .service {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas: "index name detail";
-    align-items: center;
-    column-gap: 2rem;
-    padding: 1.4rem 0 1.6rem;
-  }
-
-  .service-index {
-    padding-top: 0;
-  }
-
-  .service-name {
-    font-size: clamp(2.25rem, 4.6vw, 4.5rem);
-  }
-
-  /* Desktop keeps the row quiet until it is approached; without a pointer the
-     detail has to carry itself, so it stays put below. */
-  .service-detail {
-    text-align: right;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition:
-      opacity 0.5s ease,
-      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  .services-statement {
+    inset-inline: 2.5rem;
   }
 }
 
-@media (min-width: 900px) and (hover: hover) {
-  .service:hover .service-fill {
-    clip-path: inset(0 0 0 0);
+/* Motion off: the stack is simply a list, at one size and in focus, and the
+   section is only as tall as it needs to be. */
+@media (prefers-reduced-motion: reduce) {
+  .services {
+    height: auto;
+    padding: 9svh 0 11svh;
   }
 
-  .service:hover .service-detail {
-    opacity: 1;
+  .services-stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .services-head,
+  .services-statement {
+    position: static;
+    inset: auto;
     transform: none;
   }
 
-  .service:hover .service-index {
-    color: var(--steel-blue);
+  .services-list {
+    position: static;
+    inset: auto;
+    margin: 3.5rem 0;
   }
 
-  .service:hover .service-rule {
-    background: rgba(232, 230, 225, 0.4);
+  .service {
+    height: auto;
+    justify-content: flex-start;
+    padding: 0.9rem 0;
   }
-}
 
-/* No pointer, no reveal to wait for: the words stand solid. */
-@media (hover: none) {
-  .service-fill {
-    clip-path: inset(0 0 0 0);
+  .service-detail {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .service-index {
+    position: static;
+    display: block;
+    margin: 0 0 0.35rem;
+  }
+
+  .service-name {
+    font-size: clamp(1.75rem, 6vw, 4.5rem);
+    white-space: normal;
+  }
+
+  .services-statement {
+    margin: 2.5rem 0 0;
+    max-width: 52ch;
+    text-align: left;
+  }
+
+  .js .services [data-fade] {
+    opacity: 1;
   }
 }
 
