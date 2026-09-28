@@ -1259,33 +1259,20 @@ main {
 }
 
 /* ------------------------------------------------------------------
-   Services — four lines on a black stage, read one at a time. The
-   stack rides the scroll: whichever line reaches the reading height
-   comes into focus and full size, the rest fall back dim and out of
-   focus. A rack focus, done to type.
+   Services — four lines on a black stage. Nothing in here is driven
+   by the scroll: no stage held against the window, no pin, no scrub.
+   The section is read by scrolling past it, and the page never stops
+   moving over it.
 ------------------------------------------------------------------ */
-/* The height is the scroll the reading takes — the stage inside holds the
-   window while it happens. */
 .services {
   position: relative;
-  height: 320svh;
+  padding: 12svh 1.25rem 14svh;
   background: var(--black);
 }
 
-.services-stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: hidden;
-  padding: 0 1.25rem;
-}
-
-.services-head {
-  position: absolute;
-  top: 12svh;
-  left: 1.25rem;
-  right: 1.25rem;
-  z-index: 2;
+.services-inner {
+  max-width: 1680px;
+  margin: 0 auto;
 }
 
 .services-kicker {
@@ -1303,16 +1290,8 @@ main {
   color: rgba(232, 230, 225, 0.42);
 }
 
-/* One row per line, all the same height: the focus and the size are carried by
-   transforms, so the rhythm of the stack never moves. */
-/* Hung so that the first line already sits on the reading height — the scroll
-   then slides the whole stack up through it, one row at a time. */
 .services-list {
-  --service-row: clamp(4.5rem, 23svh, 14rem);
-  position: absolute;
-  top: calc(50svh - var(--service-row) / 2);
-  inset-inline: 1.25rem;
-  z-index: 1;
+  margin-top: clamp(4rem, 12svh, 9rem);
 }
 
 /* Centred on the page, all four of them: the stack reads as one column of
@@ -1320,9 +1299,10 @@ main {
 .service {
   display: flex;
   justify-content: center;
-  height: var(--service-row);
-  transform-origin: center center;
-  will-change: transform, filter, opacity;
+}
+
+.service + .service {
+  margin-top: clamp(2.5rem, 7svh, 6rem);
 }
 
 /* Sized to its own name, so the index and the detail can hang off its two
@@ -1351,6 +1331,41 @@ main {
   color: var(--ivory);
 }
 
+/* The rack focus: a line is sharp and full size while it crosses the middle of
+   the window, and falls back out of focus at either end of its pass.
+   It runs on the browser's own view timeline — the progress is the line's
+   position in the window, nothing more. There is no trigger, no pin and no
+   scroll being driven: the page cannot stall on it, because this reads the
+   scroll rather than taking it. */
+@keyframes service-focus {
+  from {
+    filter: blur(13px);
+    opacity: 0.16;
+    scale: 0.56;
+  }
+  38%,
+  62% {
+    filter: blur(0);
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    filter: blur(13px);
+    opacity: 0.16;
+    scale: 0.56;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .service-line {
+      animation: service-focus linear both;
+      animation-timeline: view();
+      will-change: filter, opacity, scale;
+    }
+  }
+}
+
 /* Hung off the right end of the name, the way a slate carries its own line —
    two short lines of it, set tight. */
 .service-detail {
@@ -1366,101 +1381,19 @@ main {
   color: rgba(232, 230, 225, 0.5);
 }
 
-/* Set low on the stage and to the measure of the names above it, so it reads
-   as the line under the list rather than a caption floating in the middle. */
+/* The line under the list, set to the measure of the names above it. */
 .services-statement {
-  position: absolute;
-  inset-inline: 1.25rem;
-  bottom: 11svh;
-  z-index: 2;
   max-width: min(66vw, 1100px);
-  margin-inline: auto;
+  margin: clamp(4rem, 12svh, 9rem) auto 0;
   font-size: clamp(0.8125rem, 1.15vw, 1.1875rem);
   line-height: 1.5;
   text-align: center;
   color: rgba(232, 230, 225, 0.62);
 }
 
-.js .services [data-fade] {
-  opacity: 0;
-}
-
 @media (min-width: 900px) {
-  .services-stage {
-    padding-inline: 2.5rem;
-  }
-
-  .services-head {
-    left: 2.5rem;
-    right: 2.5rem;
-  }
-
-  .services-list {
-    inset-inline: 2.5rem;
-  }
-
-  .services-statement {
-    inset-inline: 2.5rem;
-  }
-}
-
-/* Motion off: the stack is simply a list, at one size and in focus, and the
-   section is only as tall as it needs to be. */
-@media (prefers-reduced-motion: reduce) {
   .services {
-    height: auto;
-    padding: 9svh 0 11svh;
-  }
-
-  .services-stage {
-    position: static;
-    height: auto;
-    overflow: visible;
-  }
-
-  .services-head,
-  .services-statement {
-    position: static;
-    inset: auto;
-    transform: none;
-  }
-
-  .services-list {
-    position: static;
-    inset: auto;
-    margin: 3.5rem 0;
-  }
-
-  .service {
-    height: auto;
-    justify-content: flex-start;
-    padding: 0.9rem 0;
-  }
-
-  .service-detail {
-    margin-left: 0;
-    text-align: left;
-  }
-
-  .service-index {
-    position: static;
-    display: block;
-    margin: 0 0 0.35rem;
-  }
-
-  .service-name {
-    font-size: clamp(1.75rem, 6vw, 4.5rem);
-    white-space: normal;
-  }
-
-  .services-statement {
-    margin: 2.5rem 0 0;
-    max-width: 52ch;
-    text-align: left;
-  }
-
-  .js .services [data-fade] {
-    opacity: 1;
+    padding-inline: 2.5rem;
   }
 }
 
