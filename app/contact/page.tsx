@@ -29,15 +29,15 @@ export default function ContactPage() {
 
             <div className="contact-block">
               <p className="contact-label font-title">Prefer to reach out directly?</p>
-              <a className="contact-line" href={`mailto:${CONTACT.email}`}>
+              <a className="contact-reach" href={`mailto:${CONTACT.email}`}>
                 {CONTACT.email}
               </a>
               {CONTACT.phone ? (
-                <a className="contact-line" href={telHref(CONTACT.phone)}>
+                <a className="contact-reach" href={telHref(CONTACT.phone)}>
                   {CONTACT.phone}
                 </a>
               ) : null}
-              <p className="contact-line contact-line--muted">{CONTACT.place}</p>
+              <p className="contact-reach contact-reach--muted">{CONTACT.place}</p>
             </div>
 
             <div className="contact-block">

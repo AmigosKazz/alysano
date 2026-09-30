@@ -1338,17 +1338,24 @@ main {
    scroll being driven: the page cannot stall on it, because this reads the
    scroll rather than taking it. */
 @keyframes service-focus {
-  from {
+  /* Held at full blur through the outer quarters, so a line is long gone out
+     of focus by the time its neighbour reaches the middle — only one of them
+     is ever the one being read. */
+  from,
+  26% {
     filter: blur(13px);
     opacity: 0.16;
     scale: 0.56;
   }
-  38%,
-  62% {
+  /* A narrow window of focus — about a tenth of the pass either side of the
+     centre, which is closer than two lines ever are to each other. */
+  43%,
+  57% {
     filter: blur(0);
     opacity: 1;
     scale: 1;
   }
+  74%,
   to {
     filter: blur(13px);
     opacity: 0.16;
@@ -1855,7 +1862,9 @@ html.has-cursor video {
   color: var(--steel-blue);
 }
 
-.contact-line {
+/* `-reach`, not `-line`: the home page's statement already owns `.contact-line`
+   for the lines it rises, and this block is further down the file. */
+.contact-reach {
   display: block;
   font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
   line-height: 1.6;
@@ -1863,11 +1872,11 @@ html.has-cursor video {
   transition: color 0.4s ease;
 }
 
-a.contact-line:hover {
+a.contact-reach:hover {
   color: var(--steel-blue);
 }
 
-.contact-line--muted {
+.contact-reach--muted {
   margin-top: 0.75rem;
   color: rgba(232, 230, 225, 0.45);
 }
