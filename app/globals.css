@@ -3109,3 +3109,631 @@ a.contact-reach:hover {
     margin-top: 7rem;
   }
 }
+
+/* ------------------------------------------------------------------
+   Services — the way in. One control, centred at the foot of the
+   window, naming whichever discipline is crossing the reading line.
+   It arrives with the first name and leaves with the last, because an
+   IntersectionObserver on the lines is what switches it on.
+------------------------------------------------------------------ */
+.service-link {
+  color: inherit;
+  transition: color 0.4s ease;
+}
+
+.service-link:hover {
+  color: var(--steel-blue);
+}
+
+.services-cta {
+  position: fixed;
+  bottom: clamp(1.5rem, 4svh, 2.75rem);
+  left: 50%;
+  z-index: 30;
+  display: grid;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition:
+    opacity 0.55s ease,
+    translate 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  translate: 0 14px;
+  pointer-events: none;
+}
+
+.services-cta[data-shown="true"] {
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+}
+
+/* All four are stacked in one cell; only the current one is painted, so the
+   control never resizes as the name under it changes. */
+.services-cta-link {
+  grid-area: 1 / 1;
+  background: rgba(8, 10, 12, 0.72);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.services-cta-link[data-current="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.services-cta .cta-label {
+  padding: 0.9rem 1.6rem;
+  font-size: 10px;
+}
+
+.services-cta .cta-arrow {
+  width: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-cta,
+  .services-cta-link {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Services pages — the rate cards. The name arrives at the size it
+   had on the home stage, then the numbers, set as ruled rows rather
+   than cards. Mono carries every figure: they are metadata.
+------------------------------------------------------------------ */
+.service-page,
+.service-index {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 16svh 1.25rem 12svh;
+}
+
+.service-page-back {
+  margin-bottom: 2rem;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.service-page-back a {
+  transition: color 0.4s ease;
+}
+
+.service-page-back a:hover {
+  color: var(--steel-blue);
+}
+
+.service-page-title {
+  font-size: clamp(2.5rem, 9.5vw, 8rem);
+  line-height: 0.88;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.service-page-intro {
+  margin-top: 1.75rem;
+  max-width: 46ch;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.service-page-body {
+  margin-top: clamp(4rem, 10svh, 8rem);
+}
+
+/* ---- The index rail (desktop only) ---- */
+.service-rail {
+  display: none;
+}
+
+/* ---- Scope ---- */
+.service-scope {
+  display: grid;
+  gap: 2.5rem;
+  padding-bottom: clamp(3rem, 7svh, 5rem);
+  border-bottom: 1px solid rgba(232, 230, 225, 0.12);
+}
+
+.service-scope-label {
+  margin-bottom: 1rem;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.service-scope ul {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--ivory);
+}
+
+.service-scope-out li {
+  color: rgba(232, 230, 225, 0.38);
+}
+
+/* ---- A rate card ---- */
+.rates {
+  padding-top: clamp(3.5rem, 9svh, 6rem);
+  scroll-margin-top: 12svh;
+}
+
+.rates-title {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.rates-note {
+  margin-top: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* The tier switch is the phone's answer to three price columns. */
+.rates-switch {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 1.75rem;
+}
+
+.rates-switch-option {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid rgba(232, 230, 225, 0.14);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(232, 230, 225, 0.5);
+  cursor: pointer;
+  transition:
+    border-color 0.35s ease,
+    color 0.35s ease,
+    background-color 0.35s ease;
+}
+
+.rates-switch-option[data-on="true"] {
+  border-color: var(--steel-blue);
+  background: rgba(143, 169, 184, 0.08);
+  color: var(--ivory);
+}
+
+.rates-switch-option:has(:focus-visible) {
+  outline: 1px solid var(--steel-blue);
+  outline-offset: 2px;
+}
+
+.rates-table {
+  width: 100%;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.rates-table th,
+.rates-table td {
+  padding: 1rem 0.75rem 1rem 0;
+  border-bottom: 1px solid rgba(232, 230, 225, 0.1);
+  vertical-align: baseline;
+}
+
+.rates-table thead th {
+  padding-bottom: 0.7rem;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.rates-table thead th[data-recommended="true"] {
+  color: var(--steel-blue);
+}
+
+.rates-table tbody th {
+  font-weight: 400;
+  font-size: 0.9375rem;
+  color: var(--ivory);
+}
+
+.rates-table tbody td {
+  font-size: 0.8125rem;
+  color: var(--ivory);
+  white-space: nowrap;
+}
+
+/* Not a price: it should not read like one. */
+.rates-table td[data-kind="quote"],
+.rates-table td[data-kind="none"] {
+  color: rgba(232, 230, 225, 0.32);
+}
+
+.rates-from {
+  color: rgba(232, 230, 225, 0.4);
+}
+
+.rates-group {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.35);
+}
+
+.rates-table tr[data-group-start="true"] th,
+.rates-table tr[data-group-start="true"] td {
+  padding-top: 2rem;
+}
+
+.rates-request {
+  margin-top: 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.rates-request span {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.3);
+}
+
+/* On a phone only the chosen column is painted. */
+@media (max-width: 899px) {
+  .rates-table th[data-col]:not([data-col="0"]),
+  .rates-table td[data-col]:not([data-col="0"]) {
+    display: none;
+  }
+
+  .rates-table[data-tier="1"] th[data-col="1"],
+  .rates-table[data-tier="1"] td[data-col="1"],
+  .rates-table[data-tier="2"] th[data-col="2"],
+  .rates-table[data-tier="2"] td[data-col="2"] {
+    display: table-cell;
+  }
+
+  .rates-table[data-tier="1"] th[data-col="0"],
+  .rates-table[data-tier="1"] td[data-col="0"],
+  .rates-table[data-tier="2"] th[data-col="0"],
+  .rates-table[data-tier="2"] td[data-col="0"] {
+    display: none;
+  }
+
+  .rates-table td {
+    text-align: right;
+  }
+}
+
+/* ---- Blocks under the cards ---- */
+.service-block {
+  padding-top: clamp(3.5rem, 9svh, 6rem);
+}
+
+.service-block-title {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.service-block-line {
+  margin-top: 0.75rem;
+  max-width: 52ch;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.service-tiers,
+.service-factors,
+.service-notes {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  max-width: 66ch;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.service-tiers span,
+.service-factors span {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.service-notes li {
+  padding-left: 1rem;
+  border-left: 1px solid rgba(232, 230, 225, 0.14);
+  font-size: 0.8125rem;
+}
+
+.service-list {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.6);
+}
+
+.service-packs {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+
+.service-pack-title {
+  margin-bottom: 0.9rem;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.service-pack ul {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.service-pack li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(232, 230, 225, 0.08);
+  font-size: 0.875rem;
+  color: var(--ivory);
+}
+
+.service-pack li span:last-child {
+  font-size: 0.8125rem;
+  color: var(--steel-blue);
+}
+
+/* ---- The four steps to a number ---- */
+.service-steps {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.service-steps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(232, 230, 225, 0.1);
+}
+
+.service-step-index {
+  grid-row: 1 / 3;
+  font-size: 10px;
+  color: var(--steel-blue);
+}
+
+.service-step-label {
+  font-size: 0.9375rem;
+  color: var(--ivory);
+}
+
+.service-step-detail {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.service-step-fee {
+  grid-column: 2;
+  margin-top: 0.3rem;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.55);
+}
+
+.service-action {
+  padding-top: clamp(3rem, 8svh, 5rem);
+}
+
+/* ---- Terms ---- */
+.service-terms {
+  margin-top: clamp(4rem, 10svh, 7rem);
+  border-top: 1px solid rgba(232, 230, 225, 0.12);
+  padding-top: 2rem;
+}
+
+.service-terms summary {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.5);
+  cursor: pointer;
+  transition: color 0.35s ease;
+}
+
+.service-terms summary:hover {
+  color: var(--ivory);
+}
+
+.service-conditions {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  max-width: 76ch;
+}
+
+.service-conditions li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.2rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.service-conditions li > span:first-child {
+  grid-row: 1 / 3;
+  color: rgba(232, 230, 225, 0.3);
+}
+
+.service-condition-label {
+  color: var(--ivory);
+}
+
+.service-condition-detail {
+  color: var(--muted);
+}
+
+/* ---- The index page ---- */
+.service-index-list {
+  margin-top: clamp(4rem, 10svh, 8rem);
+  border-top: 1px solid rgba(232, 230, 225, 0.12);
+}
+
+.service-index-link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.35rem 1.25rem;
+  padding: clamp(1.75rem, 4svh, 2.75rem) 0;
+  border-bottom: 1px solid rgba(232, 230, 225, 0.12);
+  transition: opacity 0.4s ease;
+}
+
+.service-index-link:hover {
+  opacity: 0.62;
+}
+
+.service-index-num {
+  grid-row: 1 / 3;
+  padding-top: 0.5em;
+  font-size: 10px;
+  color: var(--steel-blue);
+}
+
+.service-index-name {
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.service-index-line {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.4);
+}
+
+@media (min-width: 900px) {
+  .service-page,
+  .service-index {
+    padding-inline: 2.5rem;
+  }
+
+  .service-scope {
+    grid-template-columns: repeat(2, minmax(0, 26%));
+    justify-content: start;
+    gap: 6rem;
+  }
+
+  .service-packs {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 3rem;
+  }
+
+  .service-steps li {
+    grid-template-columns: auto minmax(0, 22ch) minmax(0, 1fr) auto;
+    align-items: baseline;
+  }
+
+  .service-step-index {
+    grid-row: 1;
+  }
+
+  .service-step-fee {
+    grid-column: 4;
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .service-conditions li {
+    grid-template-columns: 2.5rem minmax(0, 14ch) minmax(0, 1fr);
+  }
+
+  .service-conditions li > span:first-child {
+    grid-row: 1;
+  }
+
+  /* The rail: an index held beside the cards, the way a call sheet carries
+     its own contents. */
+  .service-page-body {
+    display: grid;
+    grid-template-columns: minmax(0, 20%) minmax(0, 72%);
+    justify-content: space-between;
+  }
+
+  .service-rail {
+    display: block;
+    position: sticky;
+    top: 18svh;
+    align-self: start;
+  }
+
+  .service-rail ol {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .service-rail a {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.6rem;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(232, 230, 225, 0.45);
+    transition: color 0.35s ease;
+  }
+
+  .service-rail a:hover {
+    color: var(--ivory);
+  }
+
+  .service-rail a span {
+    color: rgba(232, 230, 225, 0.25);
+  }
+
+  /* Desktop shows all three columns, so the switch has no job. */
+  .rates-switch {
+    display: none;
+  }
+
+  .rates-table {
+    table-layout: fixed;
+  }
+
+  .rates-table th:first-child {
+    width: 40%;
+  }
+
+  .rates-table td {
+    text-align: right;
+  }
+
+  .rates-table thead th:not(:first-child) {
+    text-align: right;
+  }
+}
