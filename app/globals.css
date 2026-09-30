@@ -2113,242 +2113,261 @@ a.contact-reach:hover {
 }
 
 /* ------------------------------------------------------------------
-   Work stage — one film at a time on a dark stage. Three panels cut
-   from the same edit, the reel moving sideways under a title that
-   changes with it. The screen is the control: left half back, right
-   half forward.
+   Work — one film at a time on a full screen. Each project is its own
+   screen: its footage blown past the edges and dimmed to atmosphere,
+   the same shot held sharp in a framed window at the centre, the title
+   off its left edge and what it is off its right.
+
+   Scrolling raises the next one over the last like a curtain — one
+   clip edge crossing the whole screen, background and window together.
 ------------------------------------------------------------------ */
-.stage {
+.reel {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  height: 100svh;
   background: var(--black);
 }
 
-.stage-reel {
+.reel-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* One screen of scroll per slide. The first pays for the stage standing still
+   while the opening film is read; each one after it raises a curtain. */
+.reel-steps {
+  position: relative;
+}
+
+.reel-step {
+  height: 100svh;
+}
+
+/* Stacked in one place; the clip is what decides which is seen. */
+.reel-slide {
   position: absolute;
   inset: 0;
-}
-
-.stage-track {
-  display: flex;
-  height: 100%;
-  will-change: transform;
-}
-
-.slide {
-  flex: none;
   display: grid;
-  place-items: center;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 4vw, 4rem);
+  padding: 0 1.25rem;
+  background: var(--black);
+  will-change: clip-path;
+}
+
+.js .reel-slide + .reel-slide {
+  clip-path: inset(0% 0% 100% 0%);
+}
+
+/* ---- The room ---- */
+.reel-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.reel-bg video {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  /* Held well under the window: atmosphere, not a second picture. */
+  opacity: 0.4;
+  transform: scale(1.08);
 }
 
-/* Laid out on a shallow cylinder: the outer panels turn away from the centre,
-   which is what stops three rectangles reading as a contact sheet. */
-.slide-panels {
-  display: flex;
-  align-items: center;
-  gap: 1.1vw;
-  perspective: 1400px;
-  transform-style: preserve-3d;
-  will-change: transform;
+/* A little more black at the top and bottom, so the type never sits on a
+   bright patch of the plate. */
+.reel-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(8, 10, 12, 0.7), rgba(8, 10, 12, 0) 26%),
+    linear-gradient(to top, rgba(8, 10, 12, 0.7), rgba(8, 10, 12, 0) 26%);
 }
 
-.panel {
+/* ---- The window ---- */
+.reel-frame {
   position: relative;
-  display: block;
-  flex: none;
-  width: clamp(120px, 15vw, 250px);
-  aspect-ratio: 9 / 16;
-  overflow: hidden;
-  background: #0b0e11;
+  z-index: 1;
+  grid-column: 2;
+  width: clamp(240px, 45vw, 920px);
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  background: var(--black);
 }
 
-.panel img,
-.panel video {
+.reel-frame video {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.panel-left {
-  transform: rotateY(9deg) scale(0.94);
-}
-
-.panel-right {
-  transform: rotateY(-9deg) scale(0.94);
-}
-
-/* ---- The screen as the control ---- */
-.stage-zone {
+/* Four corner marks, drawn outside the picture so they read as a frame
+   around it rather than a border on it. */
+.reel-marks i {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 1;
-  width: 50%;
-  cursor: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(232, 230, 225, 0.75);
 }
 
-.stage-zone-prev {
+.reel-marks i:nth-child(1) {
+  top: -5px;
+  left: -5px;
+  border-width: 1px 0 0 1px;
+}
+
+.reel-marks i:nth-child(2) {
+  top: -5px;
+  right: -5px;
+  border-width: 1px 1px 0 0;
+}
+
+.reel-marks i:nth-child(3) {
+  bottom: -5px;
+  left: -5px;
+  border-width: 0 0 1px 1px;
+}
+
+.reel-marks i:nth-child(4) {
+  bottom: -5px;
+  right: -5px;
+  border-width: 0 1px 1px 0;
+}
+
+/* The centre mark a viewfinder carries. */
+.reel-cross {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  translate: -50% -50%;
+}
+
+.reel-cross::before,
+.reel-cross::after {
+  content: "";
+  position: absolute;
+  background: rgba(232, 230, 225, 0.8);
+}
+
+.reel-cross::before {
+  top: 50%;
   left: 0;
+  width: 100%;
+  height: 1px;
 }
 
-.stage-zone-next {
-  right: 0;
+.reel-cross::after {
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
 }
 
-/* ---- The bar ---- */
-.stage-bar {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 2;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: 0 1.25rem 1.5rem;
-  /* The bar itself must not swallow a click meant for the reel. */
-  pointer-events: none;
+/* ---- The two labels ---- */
+.reel-title,
+.reel-kind {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(0.5rem, 0.72vw, 0.6875rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory);
 }
 
-.stage-title {
-  font-size: clamp(2.5rem, 9vw, 9rem);
-  line-height: 0.86;
+.reel-title {
+  grid-column: 1;
+  justify-self: center;
+  max-width: 14ch;
+  text-align: center;
+}
+
+.reel-kind {
+  grid-column: 3;
+  justify-self: center;
+  color: rgba(232, 230, 225, 0.72);
+}
+
+/* ---- The last screen ---- */
+.reel-outro {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: center;
+  gap: 0;
+  text-align: center;
+}
+
+.reel-outro-kicker {
+  font-size: clamp(0.8125rem, 1.15vw, 1.125rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.reel-outro-line {
+  margin: 0.6rem 0 2.5rem;
+  font-size: clamp(2.5rem, 9vw, 7.5rem);
+  line-height: 0.9;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   color: var(--ivory);
 }
 
-/* Padded so the descenders survive, then pulled back so the row is the line box. */
-.stage-mask {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
+/* A phone has no room for a label either side of the window, so they sit
+   above and below it instead. */
+@media (max-width: 759px) {
+  .reel-slide {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 1.75rem;
+  }
 
-.stage-line {
-  display: block;
-  will-change: transform;
-}
+  .reel-title,
+  .reel-frame,
+  .reel-kind {
+    grid-column: 1;
+  }
 
-.stage-line-meta {
-  margin-top: 0.7rem;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(232, 230, 225, 0.5);
-}
+  .reel-frame {
+    width: 100%;
+  }
 
-.stage-aside {
-  display: flex;
-  align-items: flex-end;
-  gap: 1.25rem;
-  padding-bottom: 0.4rem;
-}
-
-.stage-next {
-  display: none;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: right;
-  color: var(--ivory);
-}
-
-.stage-next-label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-size: 8px;
-  letter-spacing: 0.28em;
-  color: rgba(232, 230, 225, 0.4);
-}
-
-.stage-marks {
-  display: grid;
-  gap: 0.5rem;
-  pointer-events: auto;
-}
-
-.stage-mark {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(232, 230, 225, 0.18);
-  border-radius: 50%;
-  color: rgba(232, 230, 225, 0.75);
-  transition:
-    border-color 0.4s ease,
-    color 0.4s ease,
-    background-color 0.4s ease;
-}
-
-.stage-mark:hover,
-.stage-mark:focus-visible {
-  border-color: var(--steel-blue);
-  background: rgba(143, 169, 184, 0.1);
-  color: var(--ivory);
-}
-
-.stage-mark-back svg {
-  transform: rotate(180deg);
-}
-
-/* The reel's position, kept where a timecode would sit. */
-.stage-count {
-  position: absolute;
-  top: 50%;
-  right: 1.25rem;
-  z-index: 2;
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  color: rgba(232, 230, 225, 0.4);
-  pointer-events: none;
+  .reel-title {
+    max-width: none;
+  }
 }
 
 @media (min-width: 900px) {
-  .stage-bar {
-    padding: 0 2.5rem 2.25rem;
-  }
-
-  .stage-next {
-    display: block;
-  }
-
-  .stage-count {
-    right: 2.5rem;
+  .reel-slide {
+    padding-inline: 2.5rem;
   }
 }
 
-/* No pointer to name the halves, so the marks carry the whole job. */
-@media (hover: none) {
-  .stage-mark {
-    width: 44px;
-    height: 44px;
-  }
-}
-
-/* On a phone the three panels have to hold the middle of the screen with the
-   black still reading around them, and the count gets out of their way. */
-@media (max-width: 759px) {
-  .panel {
-    width: 27vw;
+/* Motion off: the curtain is not raised, the films are simply listed one
+   screen after another. */
+@media (prefers-reduced-motion: reduce) {
+  .reel-stage {
+    position: static;
+    height: auto;
   }
 
-  .slide-panels {
-    gap: 2.5vw;
+  .reel-slide {
+    position: relative;
+    inset: auto;
+    min-height: 100svh;
   }
 
-  .stage-count {
-    top: 12svh;
+  .js .reel-slide + .reel-slide {
+    clip-path: none;
   }
 
-  .stage-line-meta {
-    margin-top: 0.5rem;
+  .reel-steps {
+    display: none;
   }
 }
 

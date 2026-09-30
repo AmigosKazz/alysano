@@ -1,219 +1,156 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FramedCta } from "@/components/ui/FramedCta";
 import { PROJECTS } from "@/lib/projects";
 
-const COUNT = PROJECTS.length;
-
-/**
- * The work, one film at a time. Three panels cut from the same edit stand side by
- * side on a dark stage; the reel moves sideways and the title changes with it.
- *
- * The screen itself is the control: the left half steps back, the right half steps
- * forward. The two marks at the corner say so out loud, and carry the action for
- * touch and for the keyboard.
- */
-export function WorkStage() {
-  const stageRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [index, setIndex] = useState(0);
-
-  const project = PROJECTS[index];
-  const next = PROJECTS[(index + 1) % COUNT];
-
-  const go = useCallback((step: 1 | -1) => {
-    setIndex((i) => (i + step + COUNT) % COUNT);
-  }, []);
-
-  // The reel slides, and the panels stretch along the way — a smear rather than a
-  // blur, so the whole move stays on transforms and holds its frame rate.
-  useLayoutEffect(() => {
-    const stage = stageRef.current;
-    const track = trackRef.current;
-    if (!stage || !track) return;
-
-    const mm = gsap.matchMedia(stage);
-
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap
-        .timeline()
-        .to(track, { xPercent: -100 * index, duration: 1.05, ease: "power3.inOut" }, 0)
-        .to(
-          "[data-panels]",
-          { scaleX: 1.07, duration: 0.5, ease: "power2.out", yoyo: true, repeat: 1 },
-          0,
-        )
-        .fromTo(
-          "[data-swap]",
-          { yPercent: 110 },
-          { yPercent: 0, duration: 0.9, stagger: 0.06, ease: "expo.out" },
-          0.12,
-        );
-    });
-
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      gsap.set(track, { xPercent: -100 * index });
-    });
-
-    return () => mm.revert();
-  }, [index]);
-
-  // Only the film on screen runs, and it runs from its first frame every time.
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const videos = stage.querySelectorAll<HTMLVideoElement>("video");
-
-    videos.forEach((video, i) => {
-      if (i === index && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      } else {
-        video.pause();
-      }
-    });
-  }, [index]);
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "ArrowRight") go(1);
-      if (event.key === "ArrowLeft") go(-1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [go]);
-
+/** Marks the four corners of the window, the way a camera frames its shot. */
+function Marks() {
   return (
-    <section ref={stageRef} className="stage">
-      <div className="stage-reel">
-        <div ref={trackRef} className="stage-track">
-          {PROJECTS.map((item, i) => (
-            <article key={item.slug} className="slide" aria-hidden={i !== index}>
-              <div data-panels className="slide-panels">
-                <span className="panel panel-left">
-                  <Image
-                    src={`/images/work/${item.slug}-a.jpg`}
-                    alt=""
-                    width={440}
-                    height={782}
-                    sizes="16vw"
-                  />
-                </span>
-
-                <span className="panel panel-mid">
-                  <video
-                    src={`/video/works/web/${item.slug}.mp4`}
-                    poster={`/images/work/${item.slug}-b.jpg`}
-                    muted
-                    loop
-                    playsInline
-                    preload={i === 0 ? "auto" : "none"}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    disablePictureInPicture
-                    disableRemotePlayback
-                  />
-                </span>
-
-                <span className="panel panel-right">
-                  <Image
-                    src={`/images/work/${item.slug}-c.jpg`}
-                    alt=""
-                    width={440}
-                    height={782}
-                    sizes="16vw"
-                  />
-                </span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      {/* The screen as the control. Behind the bar, so the marks keep their own hit area. */}
-      <button
-        type="button"
-        className="stage-zone stage-zone-prev"
-        data-cursor="Prev"
-        onClick={() => go(-1)}
-        aria-label="Previous project"
-      />
-      <button
-        type="button"
-        className="stage-zone stage-zone-next"
-        data-cursor="Next"
-        onClick={() => go(1)}
-        aria-label="Next project"
-      />
-
-      <div className="stage-bar">
-        <div className="stage-head">
-          <h1 className="stage-title font-title">
-            <span className="stage-mask">
-              <span data-swap key={project.slug} className="stage-line">
-                {project.title}
-              </span>
-            </span>
-          </h1>
-          <p className="stage-line-meta font-mono">
-            <span className="stage-mask">
-              <span data-swap key={`${project.slug}-meta`} className="stage-line">
-                {project.line}
-              </span>
-            </span>
-          </p>
-        </div>
-
-        <div className="stage-aside">
-          <p className="stage-next font-mono">
-            <span className="stage-next-label">Next</span>
-            <span className="stage-mask">
-              <span data-swap key={`${next.slug}-next`} className="stage-line">
-                {next.title}
-              </span>
-            </span>
-          </p>
-
-          <div className="stage-marks">
-            <button
-              type="button"
-              className="stage-mark"
-              onClick={() => go(1)}
-              aria-label="Next project"
-            >
-              <Chevron />
-            </button>
-            <button
-              type="button"
-              className="stage-mark stage-mark-back"
-              onClick={() => go(-1)}
-              aria-label="Previous project"
-            >
-              <Chevron />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <p className="stage-count font-mono" aria-live="polite">
-        {String(index + 1).padStart(2, "0")} / {String(COUNT).padStart(2, "0")}
-      </p>
-    </section>
+    <span className="reel-marks" aria-hidden="true">
+      <i />
+      <i />
+      <i />
+      <i />
+    </span>
   );
 }
 
-/** One glyph, turned around for the way back. */
-function Chevron() {
+/**
+ * The work, one film at a time on a full screen.
+ *
+ * Each project is a whole screen: its own footage blown up behind, dimmed to
+ * atmosphere, and the same shot held sharp in a framed window at the centre —
+ * the picture, and the room it is watched in. The title stands off its left
+ * edge, what it is off its right.
+ *
+ * Scrolling raises the next one over the last like a curtain: one clip edge
+ * crosses the whole screen, background and window together, so the cut reads
+ * as one move rather than two elements changing. The mapping is linear — a
+ * screen of scroll per film, no holds — so the page never stalls under it.
+ */
+export function WorkStage() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia(section);
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const slides = gsap.utils.toArray<HTMLElement>("[data-slide]", section);
+      // The first is simply there; every one after it is raised over the last.
+      const rising = slides.slice(1);
+      const setters = rising.map((slide) => gsap.quickSetter(slide, "clipPath"));
+      const videos = gsap.utils.toArray<HTMLVideoElement>("video", section);
+
+      const render = (progress: number) => {
+        const head = progress * rising.length;
+        rising.forEach((_, i) => {
+          // 0 → still down, 1 → fully raised. One screen of scroll each.
+          const t = gsap.utils.clamp(0, 1, head - i);
+          setters[i](`inset(0% 0% ${(1 - t) * 100}% 0%)`);
+        });
+      };
+
+      render(0);
+
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${rising.length * window.innerHeight}`,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => render(self.progress),
+      });
+
+      // Only what is on screen decodes. Four films at once is four decoders.
+      const watch = ScrollTrigger.create({
+        trigger: section,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => {
+          videos.forEach((video) => {
+            if (self.isActive) video.play().catch(() => {});
+            else video.pause();
+          });
+        },
+      });
+
+      return () => {
+        trigger.kill();
+        watch.kill();
+      };
+    });
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <svg width="13" height="10" viewBox="0 0 13 10" fill="none" aria-hidden="true">
-      <path
-        d="M1 1l4 4-4 4M7 1l4 4-4 4"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="square"
-      />
-    </svg>
+    <section ref={sectionRef} className="reel">
+      <div className="reel-stage">
+        {PROJECTS.map((project, i) => (
+          <article key={project.slug} data-slide className="reel-slide" style={{ zIndex: i }}>
+            {/* The same shot, blown past the edges and held under the type. */}
+            <div className="reel-bg" aria-hidden="true">
+              <video
+                src={`/video/works/web/${project.slug}.mp4`}
+                poster={`/video/works/web/${project.slug}.jpg`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                tabIndex={-1}
+                disablePictureInPicture
+              />
+            </div>
+
+            <p className="reel-title font-mono">{project.title}</p>
+
+            <figure className="reel-frame">
+              <video
+                src={`/video/works/web/${project.slug}.mp4`}
+                poster={`/video/works/web/${project.slug}.jpg`}
+                aria-label={`${project.title} — ${project.line}`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                tabIndex={-1}
+                disablePictureInPicture
+              />
+              <Marks />
+              <span className="reel-cross" aria-hidden="true" />
+            </figure>
+
+            <p className="reel-kind font-mono">{project.kind}</p>
+          </article>
+        ))}
+
+        {/* The last screen: the reel gives way to the invitation. */}
+        <article data-slide className="reel-slide reel-outro" style={{ zIndex: PROJECTS.length }}>
+          <p className="reel-outro-kicker font-title">The footage is the material.</p>
+          <h2 className="reel-outro-line font-title">
+            The film
+            <br />
+            is the edit.
+          </h2>
+          <FramedCta href="/contact" label="Start a project" wide />
+        </article>
+      </div>
+
+      {/* One screen of scroll per slide: the stage is held for as long as there
+          are curtains left to raise, and the last one is the outro's. */}
+      <div className="reel-steps" aria-hidden="true">
+        {Array.from({ length: PROJECTS.length + 1 }, (_, i) => (
+          <div key={i} className="reel-step" />
+        ))}
+      </div>
+    </section>
   );
 }
