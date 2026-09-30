@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { CONTACT, telHref } from "@/lib/contact";
 
@@ -68,7 +69,12 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <ContactForm />
+          {/* The form reads `?service=` to open the message with the rate card
+              the visitor came from, and `useSearchParams` needs a boundary or
+              the whole page drops out of static rendering. */}
+          <Suspense fallback={<div className="form" />}>
+            <ContactForm />
+          </Suspense>
         </section>
       </div>
     </main>

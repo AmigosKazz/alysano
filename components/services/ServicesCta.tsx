@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { FramedCta } from "@/components/ui/FramedCta";
 
 type Item = { slug: string; name: string };
 
@@ -15,9 +15,11 @@ type Item = { slug: string; name: string };
  *
  * No scroll listener and no scroll-driven animation: the observer watches, it
  * never takes the scroll.
+ *
+ * The control itself is the header's — same frame, same roll, same steel
+ * square — so the page only ever teaches one call to action.
  */
 export function ServicesCta({ items }: { items: Item[] }) {
-  const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<number | null>(null);
 
   useEffect(() => {
@@ -35,8 +37,6 @@ export function ServicesCta({ items }: { items: Item[] }) {
           if (entry.isIntersecting) inBand.add(index);
           else inBand.delete(index);
         }
-        // The lowest index reads as the one being left behind last — with a
-        // band this thin there is rarely more than one anyway.
         setActive(inBand.size ? Math.min(...inBand) : null);
       },
       { rootMargin: "-42% 0px -42% 0px", threshold: 0 },
@@ -50,36 +50,29 @@ export function ServicesCta({ items }: { items: Item[] }) {
 
   return (
     <div
-      ref={ref}
       className="services-cta"
       data-shown={item ? "true" : "false"}
-      // Out of the tab order and off the a11y tree while it is not on screen:
-      // the rate cards are reachable from the section's own links regardless.
-      aria-hidden={item ? undefined : "true"}
+      // Off the a11y tree and out of the tab order while it is not on screen:
+      // every discipline is still reachable from its own name in the list.
       inert={!item}
     >
+      {/* The name changes, the control does not — so the frame never resizes
+          under the pointer as the stack moves. */}
+      <p className="services-cta-name font-mono" aria-hidden="true">
+        {item?.name ?? ""}
+      </p>
+
       {items.map((entry, i) => (
-        <Link
+        <FramedCta
           key={entry.slug}
           href={`/services/${entry.slug}`}
-          className="services-cta-link cta cta--block font-mono"
+          label="See rates"
+          ariaLabel={`See ${entry.name} rates`}
+          wide
+          className="services-cta-link"
           data-current={i === active ? "true" : "false"}
           tabIndex={i === active ? undefined : -1}
-        >
-          <span className="cta-label">
-            See {entry.name} rates
-          </span>
-          <span className="cta-arrow" aria-hidden="true">
-            <svg width="13" height="9" viewBox="0 0 13 9" fill="none">
-              <path
-                d="M0 4.5h11M8 1l3.5 3.5L8 8"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="square"
-              />
-            </svg>
-          </span>
-        </Link>
+        />
       ))}
     </div>
   );

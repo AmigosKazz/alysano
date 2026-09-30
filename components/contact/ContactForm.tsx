@@ -1,9 +1,11 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { gsap } from "gsap";
 import { CtaButton } from "@/components/ui/Cta";
 import { CONTACT } from "@/lib/contact";
+import { categoryBySlug } from "@/lib/services";
 
 type Field = {
   name: string;
@@ -32,6 +34,10 @@ const cue = (field: Field) => `[  ${field.label}${field.required ? "*" : ""}  ]`
 export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [sent, setSent] = useState(false);
+
+  // Arriving from a rate card: the message opens with what was being read, so
+  // the visitor is not asked to retype what the last page already knew.
+  const service = categoryBySlug(useSearchParams().get("service") ?? "");
 
   useLayoutEffect(() => {
     const form = formRef.current;
@@ -102,6 +108,7 @@ export function ContactForm() {
             name="message"
             rows={3}
             placeholder="Message"
+            defaultValue={service ? `About ${service.name} — ` : undefined}
             className="field-input field-area"
           />
         </p>

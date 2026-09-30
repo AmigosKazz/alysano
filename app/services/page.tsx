@@ -13,7 +13,7 @@ export default function ServicesIndexPage() {
   return (
     <main>
       <div className="page-cover">
-        <section className="service-index">
+        <section className="services-index">
           <header className="service-page-head">
             <h1 className="service-page-title font-title">Services</h1>
             <p className="service-page-intro">
@@ -22,15 +22,15 @@ export default function ServicesIndexPage() {
             </p>
           </header>
 
-          <ul className="service-index-list">
+          <ul className="services-index-list">
             {CATEGORIES.map((category, i) => (
               <li key={category.slug}>
-                <Link href={`/services/${category.slug}`} className="service-index-link">
-                  <span className="service-index-num font-mono" aria-hidden="true">
+                <Link href={`/services/${category.slug}`} className="services-index-link">
+                  <span className="services-index-num font-mono" aria-hidden="true">
                     [{String(i + 1).padStart(2, "0")}]
                   </span>
-                  <span className="service-index-name font-title">{category.name}</span>
-                  <span className="service-index-line font-mono">{category.line}</span>
+                  <span className="services-index-name font-title">{category.name}</span>
+                  <span className="services-index-line font-mono">{category.line}</span>
                 </Link>
               </li>
             ))}
