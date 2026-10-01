@@ -47,14 +47,19 @@ export function WorkStage() {
       const rising = slides.slice(1);
       const setters = rising.map((slide) => gsap.quickSetter(slide, "clipPath"));
       const videos = gsap.utils.toArray<HTMLVideoElement>("video", section);
+      const setHint = gsap.quickSetter(section.querySelector("[data-hint]")!, "opacity");
 
       const render = (progress: number) => {
         const head = progress * rising.length;
         rising.forEach((_, i) => {
-          // 0 → still down, 1 → fully raised. One screen of scroll each.
+          // 0 → still below the frame, 1 → fully up. One screen of scroll each.
+          // The clip opens from the bottom edge: scrolling down brings the next
+          // film up from under the last, which is the way the reel reads.
           const t = gsap.utils.clamp(0, 1, head - i);
-          setters[i](`inset(0% 0% ${(1 - t) * 100}% 0%)`);
+          setters[i](`inset(${(1 - t) * 100}% 0% 0% 0%)`);
         });
+        // The hint belongs to the first screen only.
+        setHint(1 - gsap.utils.clamp(0, 1, head / 0.18));
       };
 
       render(0);
@@ -109,7 +114,7 @@ export function WorkStage() {
               />
             </div>
 
-            <p className="reel-title font-mono">{project.title}</p>
+            <p className="reel-title font-title">{project.title}</p>
 
             <figure className="reel-frame">
               <video
@@ -128,7 +133,7 @@ export function WorkStage() {
               <span className="reel-cross" aria-hidden="true" />
             </figure>
 
-            <p className="reel-kind font-mono">{project.kind}</p>
+            <p className="reel-kind font-title">{project.kind}</p>
           </article>
         ))}
 
@@ -142,6 +147,20 @@ export function WorkStage() {
           </h2>
           <FramedCta href="/contact" label="Start a project" wide />
         </article>
+
+        {/* Only on the first screen: once the reel is moving it has said its
+            piece, so it fades out over the opening curtain. */}
+        <p data-hint className="reel-hint font-mono" aria-hidden="true">
+          scroll
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none">
+            <path
+              d="M4.5 0v9.5M1 6.5l3.5 3.5L8 6.5"
+              stroke="currentColor"
+              strokeWidth="1.1"
+              strokeLinecap="square"
+            />
+          </svg>
+        </p>
       </div>
 
       {/* One screen of scroll per slide: the stage is held for as long as there

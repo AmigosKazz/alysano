@@ -2156,8 +2156,10 @@ a.contact-reach:hover {
   will-change: clip-path;
 }
 
+/* Waiting under the frame: the clip opens from the bottom edge, so the next
+   film rises into place as the page is scrolled down. */
 .js .reel-slide + .reel-slide {
-  clip-path: inset(0% 0% 100% 0%);
+  clip-path: inset(100% 0% 0% 0%);
 }
 
 /* ---- The room ---- */
@@ -2193,7 +2195,7 @@ a.contact-reach:hover {
   position: relative;
   z-index: 1;
   grid-column: 2;
-  width: clamp(240px, 45vw, 920px);
+  width: clamp(240px, 48vw, 980px);
   margin: 0;
   aspect-ratio: 16 / 9;
   background: var(--black);
@@ -2270,27 +2272,52 @@ a.contact-reach:hover {
 }
 
 /* ---- The two labels ---- */
+/* Set in the title face, not the mono: they name the film, they are not
+   metadata about it. */
 .reel-title,
 .reel-kind {
   position: relative;
   z-index: 1;
-  font-size: clamp(0.5rem, 0.72vw, 0.6875rem);
-  letter-spacing: 0.2em;
+  font-size: clamp(1rem, 1.5vw, 1.625rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--ivory);
 }
 
+/* Each leans toward the window it belongs to. */
 .reel-title {
   grid-column: 1;
-  justify-self: center;
-  max-width: 14ch;
-  text-align: center;
+  justify-self: end;
+  max-width: 12ch;
+  text-align: right;
 }
 
 .reel-kind {
   grid-column: 3;
-  justify-self: center;
-  color: rgba(232, 230, 225, 0.72);
+  justify-self: start;
+  max-width: 12ch;
+  text-align: left;
+}
+
+/* ---- The hint on the first screen ---- */
+.reel-hint {
+  position: absolute;
+  bottom: clamp(1.5rem, 4svh, 2.5rem);
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  translate: -50% 0;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid rgba(232, 230, 225, 0.2);
+  background: rgba(8, 10, 12, 0.5);
+  backdrop-filter: blur(6px);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(232, 230, 225, 0.8);
+  pointer-events: none;
 }
 
 /* ---- The last screen ---- */
@@ -2366,7 +2393,8 @@ a.contact-reach:hover {
     clip-path: none;
   }
 
-  .reel-steps {
+  .reel-steps,
+  .reel-hint {
     display: none;
   }
 }
