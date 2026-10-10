@@ -712,7 +712,7 @@ main {
 ------------------------------------------------------------------ */
 .work {
   position: relative;
-  padding: 2rem 1.25rem 6rem;
+  padding: 2rem clamp(1.25rem, 5.6vw, 2rem) 6rem;
 }
 
 .work-inner {
@@ -848,34 +848,22 @@ main {
 }
 
 /* ---- The band ----
-   Phone gets one column rather than a shrunk-down band: the wide frames run
-   full width, the upright ones sit short of the opposite margin so the column
-   keeps a rhythm instead of becoming a stack of equal boxes. */
+   Phone gets one full-width column. The compact 10/11 crop keeps all four
+   projects in one consistent sequence without the old offset-card gaps. */
 .work-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
+  gap: clamp(14px, 5.6vw, 32px);
 }
 
 .work-tile {
   position: relative;
   display: block;
+  width: 100%;
+  aspect-ratio: 10 / 11;
   overflow: hidden;
   background: #0b0e11;
   -webkit-tap-highlight-color: transparent;
-}
-
-.work-tile[data-span="3"] {
-  aspect-ratio: 16 / 9;
-}
-
-.work-tile[data-span="2"] {
-  width: 76%;
-  aspect-ratio: 4 / 5;
-}
-
-.work-grid > :nth-child(2) {
-  justify-self: end;
 }
 
 .work-plate {
@@ -1019,6 +1007,18 @@ main {
   }
 }
 
+/* Tablet is the neutral joint between the phone stack and desktop band: two
+   equal columns, with no wide/narrow spans inherited from either side. */
+@media (min-width: 768px) and (max-width: 899px) {
+  .work-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .work-tile {
+    aspect-ratio: 10 / 13;
+  }
+}
+
 @media (min-width: 900px) {
   .work {
     display: flex;
@@ -1057,12 +1057,15 @@ main {
 
   .work-tile[data-span="3"] {
     grid-column: span 3;
+    width: auto;
+    height: auto;
     aspect-ratio: auto;
   }
 
   .work-tile[data-span="2"] {
     grid-column: span 2;
     width: auto;
+    height: auto;
     aspect-ratio: auto;
   }
 
@@ -3422,6 +3425,16 @@ a.contact-reach:hover {
 
 .rates-from {
   color: rgba(232, 230, 225, 0.4);
+}
+
+/* A figure not shared yet: a bar where it will sit, one width for every cell so
+   nothing can be guessed from its length. */
+.rates-locked {
+  display: inline-block;
+  width: 6ch;
+  height: 0.45em;
+  vertical-align: middle;
+  background: rgba(232, 230, 225, 0.14);
 }
 
 .rates-group {

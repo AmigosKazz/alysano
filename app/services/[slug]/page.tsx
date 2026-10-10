@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PriceTable } from "@/components/services/PriceTable";
 import { Cta } from "@/components/ui/Cta";
+import { formatDiscount } from "@/lib/money";
+import { getRates } from "@/lib/rates.server";
 import {
   CATALOGUES,
   CATEGORIES,
@@ -13,7 +15,6 @@ import {
   PROJECT_STUDY,
   TIER_SCOPE,
   categoryBySlug,
-  formatDiscount,
 } from "@/lib/services";
 
 export const generateStaticParams = () => CATEGORIES.map(({ slug }) => ({ slug }));
@@ -42,6 +43,10 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const category = categoryBySlug(slug);
   if (!category) notFound();
+
+  // TODO: gate behind an approved request — until then every visitor sees the
+  // rates, exactly as before they were moved to the server.
+  const rates = getRates();
 
   const catalogues = category.catalogueIds.map((id) => CATALOGUES[id]);
   const packs = category.packIds.map((id) => PACKS[id]);
@@ -99,7 +104,11 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               </section>
 
               {catalogues.map((catalogue) => (
-                <PriceTable key={catalogue.id} catalogue={catalogue} />
+                <PriceTable
+                  key={catalogue.id}
+                  catalogue={catalogue}
+                  prices={rates.catalogues[catalogue.id]}
+                />
               ))}
 
               {/* Production design carries no rate card: it is built per
@@ -192,9 +201,11 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                         <h3 className="service-pack-title font-mono">{pack.title}</h3>
                         <ul>
                           {pack.steps.map((step) => (
-                            <li key={step.label}>
+                            <li key={step.key}>
                               <span>{step.label}</span>
-                              <span className="font-mono">{formatDiscount(step.discount)}</span>
+                              <span className="font-mono">
+                                {formatDiscount(rates.packs[pack.id][step.key])}
+                              </span>
                             </li>
                           ))}
                         </ul>
@@ -215,7 +226,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                       </span>
                       <span className="service-step-label">{step.label}</span>
                       <span className="service-step-detail">{step.detail}</span>
-                      <span className="service-step-fee font-mono">{step.fee}</span>
+                      <span className="service-step-fee font-mono">{rates.study[step.key]}</span>
                     </li>
                   ))}
                 </ol>

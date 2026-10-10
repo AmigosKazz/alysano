@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, useState } from "react";
-import { formatPrice, type Catalogue } from "@/lib/services";
+import { formatPrice, type Prices } from "@/lib/money";
+import type { Catalogue } from "@/lib/services";
 
 /**
  * A rate card. One row per piece of work, one column per tier.
@@ -11,8 +12,19 @@ import { formatPrice, type Catalogue } from "@/lib/services";
  * with a real radio group, and the change is announced. Nothing is hidden from
  * a screen reader: the columns it is not showing are still in the document,
  * carried by the caption and the row headers.
+ *
+ * The layout and the figures arrive apart. `catalogue` is public; `prices` is
+ * handed over by the server only when the visitor may see them, keyed by row.
+ * Without it the table keeps its shape and every figure is a blank bar — the
+ * markup carries nothing that could be read back out of it.
  */
-export function PriceTable({ catalogue }: { catalogue: Catalogue }) {
+export function PriceTable({
+  catalogue,
+  prices,
+}: {
+  catalogue: Catalogue;
+  prices: Readonly<Record<string, Prices>> | null;
+}) {
   const [tier, setTier] = useState<number>(catalogue.recommended ?? 0);
   const name = useId();
 
@@ -49,7 +61,7 @@ export function PriceTable({ catalogue }: { catalogue: Catalogue }) {
 
       <table className="rates-table" data-tier={tier}>
         <caption className="sr-only">
-          {catalogue.title} — rates in ariary by tier
+          {catalogue.title} — {prices ? "rates in ariary by tier" : "rates shared on request"}
         </caption>
         <thead>
           <tr>
@@ -74,19 +86,25 @@ export function PriceTable({ catalogue }: { catalogue: Catalogue }) {
                 {heading ? <span className="rates-group font-mono">{heading}</span> : null}
                 {row.label}
               </th>
-              {row.prices.map((price, i) => (
-                <td key={i} className="font-mono" data-col={i} data-kind={price.kind}>
-                  {formatPrice(price)}
-                  {price.kind === "amount" && price.from ? (
-                    <span className="rates-from" aria-label="and up">
-                      +
-                    </span>
-                  ) : null}
-                  {price.kind === "none" ? (
-                    <span className="sr-only">not offered at this tier</span>
-                  ) : null}
-                </td>
-              ))}
+              {prices
+                ? prices[row.key].map((price, i) => (
+                    <td key={i} className="font-mono" data-col={i} data-kind={price.kind}>
+                      {formatPrice(price)}
+                      {price.kind === "amount" && price.from ? (
+                        <span className="rates-from" aria-label="and up">
+                          +
+                        </span>
+                      ) : null}
+                      {price.kind === "none" ? (
+                        <span className="sr-only">not offered at this tier</span>
+                      ) : null}
+                    </td>
+                  ))
+                : catalogue.tiers.map((label, i) => (
+                    <td key={label} className="font-mono" data-col={i} data-kind="locked">
+                      <span className="rates-locked" aria-hidden="true" />
+                    </td>
+                  ))}
             </tr>
           ))}
         </tbody>
