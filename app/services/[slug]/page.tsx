@@ -31,7 +31,7 @@ export async function generateMetadata({
   if (!category) return {};
 
   return {
-    title: `${category.name} — rates — Aly Sanoo`,
+    title: `${category.name} — Aly Sanoo`,
     description: category.intro,
   };
 }

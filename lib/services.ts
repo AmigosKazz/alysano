@@ -379,7 +379,7 @@ export const CATEGORIES: Category[] = [
     name: "Directing",
     line: "Treatment. Shot design. Casting eye. On-set direction. Performance and blocking.",
     intro:
-      "Behind the camera, or in front of the whole thing. Rates below are for the shoot itself; the last two tables carry a piece end to end.",
+      "Behind the camera, or in front of the whole thing. The first rate cards are for the shoot itself; the last two carry a piece end to end.",
     scope: {
       included: ["Shot design and framing", "On-set direction", "Camera and lighting crew", "Rushes handed over"],
       excluded: ["Editing", "Colour grading", "Sound design", "VFX"],

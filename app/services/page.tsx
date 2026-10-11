@@ -3,9 +3,9 @@ import Link from "next/link";
 import { CATEGORIES } from "@/lib/services";
 
 export const metadata: Metadata = {
-  title: "Services & rates — Aly Sanoo",
+  title: "Services — Aly Sanoo",
   description:
-    "Directing, post-production, production design and full visual production — what each covers and what it costs, in ariary.",
+    "Directing, post-production, production design and full visual production — what each covers and how a quote is built. Rates on request.",
 };
 
 /** The four disciplines, listed the way the home section stands them up. */
@@ -17,8 +17,9 @@ export default function ServicesIndexPage() {
           <header className="service-page-head">
             <h1 className="service-page-title font-title">Services</h1>
             <p className="service-page-intro">
-              Four disciplines, one chain. Each carries its own rate card in ariary;
-              every rate is a starting point, and the quote follows the brief.
+              Four disciplines, one chain. What each covers is open to read; the
+              rates are shared on request, and every one is a starting point — the
+              quote follows the brief.
             </p>
           </header>
 
