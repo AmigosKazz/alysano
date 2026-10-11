@@ -6,25 +6,7 @@ import { gsap } from "gsap";
 import { CtaButton } from "@/components/ui/Cta";
 import { CONTACT } from "@/lib/contact";
 import { categoryBySlug } from "@/lib/services";
-
-type Field = {
-  name: string;
-  label: string;
-  type?: string;
-  required?: boolean;
-  autoComplete?: string;
-};
-
-/** Two to a row: who it is and where to answer, then how else to reach them. */
-const FIELDS: Field[] = [
-  { name: "name", label: "Name", required: true, autoComplete: "name" },
-  { name: "email", label: "Email", type: "email", required: true, autoComplete: "email" },
-  { name: "phone", label: "Phone", type: "tel", autoComplete: "tel" },
-  { name: "company", label: "Company", autoComplete: "organization" },
-];
-
-/** The bracket the rest of the page puts around a piece of metadata. */
-const cue = (field: Field) => `[  ${field.label}${field.required ? "*" : ""}  ]`;
+import { FIELDS, cue } from "./fields";
 
 /**
  * No backend to speak to, so the form composes the message and hands it to the

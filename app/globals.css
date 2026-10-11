@@ -3647,9 +3647,6 @@ a.contact-reach:hover {
   color: var(--muted);
 }
 
-.rates-gate-action {
-  margin-top: 1.75rem;
-}
 
 /* ---- Questions ---- */
 .service-faq {
@@ -3863,4 +3860,18 @@ a.contact-reach:hover {
   .rates-table thead th:not(:first-child) {
     text-align: right;
   }
+}
+
+/* ---- Rates request: the contact form's fields, set narrower ---- */
+.rates-form {
+  max-width: 34rem;
+  margin-top: 2rem;
+}
+
+.rates-form-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }

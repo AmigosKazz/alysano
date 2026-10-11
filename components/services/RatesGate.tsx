@@ -1,4 +1,4 @@
-import { Cta } from "@/components/ui/Cta";
+import { RatesRequestForm } from "./RatesRequestForm";
 import type { RatesAccess } from "@/lib/rates/access";
 
 /** 11.10.2026 — day first, the way the rest of the page writes a date. */
@@ -28,12 +28,6 @@ export function RatesGate({
   slug: string;
   access: RatesAccess;
 }) {
-  const request = (label: string) => (
-    // TODO: the request form lands here — until then the contact page, which
-    // already opens the message on this service.
-    <Cta href={`/contact?service=${slug}`} label={label} />
-  );
-
   return (
     <section id="rates" className="rates-gate" aria-label="Rates access">
       {access.state === "granted" ? (
@@ -65,7 +59,7 @@ export function RatesGate({
               ? "Your access to the rates has ended. Ask again and a new link will follow."
               : "What this covers is open to read. The rates are shared with whoever asks — each request is read, and answered by hand."}
           </p>
-          <div className="rates-gate-action">{request("Ask for the rates")}</div>
+          <RatesRequestForm slug={slug} />
         </>
       ) : null}
     </section>
