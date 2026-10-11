@@ -3626,6 +3626,56 @@ a.contact-reach:hover {
   padding-top: clamp(3rem, 8svh, 5rem);
 }
 
+/* ---- Rates access: one quiet line above the figures ---- */
+.rates-gate {
+  padding-top: clamp(3.5rem, 9svh, 6rem);
+  scroll-margin-top: 12svh;
+}
+
+.rates-gate-meta {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--steel-blue);
+}
+
+.rates-gate-line {
+  margin-top: 0.9rem;
+  max-width: 52ch;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.rates-gate-action {
+  margin-top: 1.75rem;
+}
+
+/* ---- Questions ---- */
+.service-faq {
+  margin-top: 1.5rem;
+  max-width: 62ch;
+  border-top: 1px solid rgba(232, 230, 225, 0.12);
+}
+
+.service-faq details {
+  border-bottom: 1px solid rgba(232, 230, 225, 0.12);
+  padding: 1.1rem 0;
+}
+
+.service-faq summary {
+  font-size: 0.9375rem;
+  color: var(--ivory);
+  cursor: pointer;
+}
+
+.service-faq p {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
 /* ---- Terms ---- */
 .service-terms {
   margin-top: clamp(4rem, 10svh, 7rem);

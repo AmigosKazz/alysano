@@ -1,7 +1,7 @@
 import "server-only";
 
 import { formatPrice, type Discount, type Price, type Prices } from "./money";
-import type { CatalogueId, PackId, RowKey, StepKey, StudyStepKey } from "./services";
+import type { CatalogueId, PackId, PaidStepKey, RowKey, StepKey } from "./services";
 
 /**
  * Every figure on the site, and the only place one is written.
@@ -126,11 +126,8 @@ const DISCOUNTS: { [P in PackId]: Record<StepKey<P>, Discount> } = {
 /* The path to a quote — the one paid step on it                       */
 /* ------------------------------------------------------------------ */
 
-const STUDY_FEES: Record<StudyStepKey, string> = {
-  brief: "—",
+const STUDY_FEES: Record<PaidStepKey, string> = {
   script: formatPrice(ar(100_000)),
-  preparation: "Per quote",
-  quote: "Included in the study",
 };
 
 /* ------------------------------------------------------------------ */

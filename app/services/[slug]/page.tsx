@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PriceTable } from "@/components/services/PriceTable";
+import { RatesGate } from "@/components/services/RatesGate";
 import { Cta } from "@/components/ui/Cta";
 import { formatDiscount } from "@/lib/money";
+import { getRatesAccess } from "@/lib/rates/access";
 import { getRates } from "@/lib/rates.server";
 import {
   CATALOGUES,
@@ -44,9 +46,12 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const category = categoryBySlug(slug);
   if (!category) notFound();
 
-  // TODO: gate behind an approved request — until then every visitor sees the
-  // rates, exactly as before they were moved to the server.
-  const rates = getRates();
+  // The one decision. The figures are only read from their module when it is
+  // yes — otherwise they are never in memory for this request, let alone in
+  // the page. Reading the cookie is also what makes this page dynamic: the
+  // public text below is still plain HTML, but no response is shared.
+  const access = await getRatesAccess(slug);
+  const rates = access.state === "granted" ? getRates() : null;
 
   const catalogues = category.catalogueIds.map((id) => CATALOGUES[id]);
   const packs = category.packIds.map((id) => PACKS[id]);
@@ -103,11 +108,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 </div>
               </section>
 
+              {/* Where the visitor stands with the figures below. */}
+              <RatesGate slug={slug} access={access} />
+
               {catalogues.map((catalogue) => (
                 <PriceTable
                   key={catalogue.id}
                   catalogue={catalogue}
-                  prices={rates.catalogues[catalogue.id]}
+                  prices={rates ? rates.catalogues[catalogue.id] : null}
                 />
               ))}
 
@@ -203,9 +211,16 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                           {pack.steps.map((step) => (
                             <li key={step.key}>
                               <span>{step.label}</span>
-                              <span className="font-mono">
-                                {formatDiscount(rates.packs[pack.id][step.key])}
-                              </span>
+                              {rates ? (
+                                <span className="font-mono">
+                                  {formatDiscount(rates.packs[pack.id][step.key])}
+                                </span>
+                              ) : (
+                                <span className="font-mono">
+                                  <span className="rates-locked" aria-hidden="true" />
+                                  <span className="sr-only">shared on request</span>
+                                </span>
+                              )}
                             </li>
                           ))}
                         </ul>
@@ -226,12 +241,36 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                       </span>
                       <span className="service-step-label">{step.label}</span>
                       <span className="service-step-detail">{step.detail}</span>
-                      <span className="service-step-fee font-mono">{rates.study[step.key]}</span>
+                      <span className="service-step-fee font-mono">
+                        {step.fee ??
+                          (rates ? (
+                            rates.study[step.key]
+                          ) : (
+                            <>
+                              <span className="rates-locked" aria-hidden="true" />
+                              <span className="sr-only">shared on request</span>
+                            </>
+                          ))}
+                      </span>
                     </li>
                   ))}
                 </ol>
                 <p className="service-block-line">{PROJECT_STUDY.line}</p>
               </section>
+
+              {category.faq?.length ? (
+                <section className="service-block" aria-label="Questions">
+                  <h2 className="service-block-title font-title">Before you write</h2>
+                  <div className="service-faq">
+                    {category.faq.map((entry) => (
+                      <details key={entry.question}>
+                        <summary>{entry.question}</summary>
+                        <p>{entry.answer}</p>
+                      </details>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
 
               <div className="service-action">
                 <Cta href={`/contact?service=${category.slug}`} label="Request a quote" />

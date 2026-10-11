@@ -271,17 +271,27 @@ export type StepKey<P extends PackId> = (typeof PACKS)[P]["steps"][number]["key"
 /* The path to a quote                                                 */
 /* ------------------------------------------------------------------ */
 
-export const PROJECT_STUDY = {
+export type StudyStep = {
+  key: string;
+  label: string;
+  detail: string;
+  /** What the step costs, when that is not a figure. A step without one is the
+   *  paid step: its fee is kept on the server with the rest. */
+  fee?: string;
+};
+
+export const PROJECT_STUDY: { line: string; steps: readonly StudyStep[] } = {
   line: "Settled once the brief is clear, before the script is read and the quote is prepared.",
   steps: [
-    { key: "brief", label: "Brief", detail: "Objectives, references, constraints" },
+    { key: "brief", label: "Brief", detail: "Objectives, references, constraints", fee: "—" },
     { key: "script", label: "Script study", detail: "Reading the story and what it needs" },
-    { key: "preparation", label: "Preparation", detail: "Crew, equipment, production" },
-    { key: "quote", label: "Quote", detail: "A budget matched to the project" },
+    { key: "preparation", label: "Preparation", detail: "Crew, equipment, production", fee: "Per quote" },
+    { key: "quote", label: "Quote", detail: "A budget matched to the project", fee: "Included in the study" },
   ],
-} as const;
+};
 
-export type StudyStepKey = (typeof PROJECT_STUDY)["steps"][number]["key"];
+/** The one step whose fee is a figure. */
+export type PaidStepKey = "script";
 
 /* ------------------------------------------------------------------ */
 /* Production design — carried by the project, not by a rate card      */
@@ -356,6 +366,9 @@ export type Category = {
   scope: { included: string[]; excluded: string[] };
   catalogueIds: CatalogueId[];
   packIds: PackId[];
+  /** Answers to what a visitor asks before writing. Shown once there are some.
+   *  TODO: the questions and answers come from Aly — none are written here. */
+  faq?: readonly { question: string; answer: string }[];
   /** The shared seven. */
   showOnRequest?: boolean;
 };

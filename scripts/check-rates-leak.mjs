@@ -3,6 +3,10 @@
  * hands to a browser: the client chunks, and every page prerendered as HTML or
  * RSC payload. Run it after `next build`.
  *
+ * With `--url http://localhost:5055` it also asks a running server for each
+ * service page the way a stranger would — no cookie, as HTML and as RSC — since
+ * a page rendered on demand leaves nothing in the build to read.
+ *
  * The amounts are read from the rate file itself rather than listed here, so
  * the check follows the rate cards without ever being edited.
  */
@@ -48,8 +52,7 @@ const walk = (dir) =>
     return entry.isDirectory() ? walk(path) : [path];
   });
 
-function inspect(path) {
-  const text = readFileSync(path, "utf8");
+function inspect(text) {
   const reasons = [];
 
   const formatted = [...new Set(text.match(FORMATTED) ?? [])];
@@ -72,16 +75,40 @@ const targets = [
 ];
 
 let leaks = 0;
-for (const path of targets) {
-  const reasons = inspect(path);
-  if (!reasons.length) continue;
+let checked = targets.length;
+const report = (name, text) => {
+  const reasons = inspect(text);
+  if (!reasons.length) return;
   leaks += 1;
-  console.log(`✗ ${path.slice(root.length)}\n    ${reasons.join("\n    ")}`);
+  console.log(`✗ ${name}\n    ${reasons.join("\n    ")}`);
+};
+
+for (const path of targets) report(path.slice(root.length), readFileSync(path, "utf8"));
+
+const base = process.argv[process.argv.indexOf("--url") + 1];
+if (process.argv.includes("--url") && base?.startsWith("http")) {
+  // The slugs are read from the catalogue, so a new service is checked too.
+  const slugs = [...readFileSync(join(root, "lib/services.ts"), "utf8").matchAll(/slug: "([^"]+)"/g)].map(
+    (m) => m[1],
+  );
+  for (const slug of slugs) {
+    for (const [kind, headers] of [["html", {}], ["rsc", { RSC: "1" }]]) {
+      const url = `${base}/services/${slug}`;
+      const response = await fetch(url, { headers });
+      if (!response.ok) {
+        console.log(`✗ ${url} (${kind}) answered ${response.status}`);
+        leaks += 1;
+        continue;
+      }
+      checked += 1;
+      report(`${url} (${kind})`, await response.text());
+    }
+  }
 }
 
 console.log(
   leaks
-    ? `\n${leaks} file(s) carry rates — ${amounts.size} amounts checked across ${targets.length} files.`
-    : `✓ No rate in ${targets.length} files — ${amounts.size} amounts checked.`,
+    ? `\n${leaks} file(s) carry rates — ${amounts.size} amounts checked across ${checked} files.`
+    : `✓ No rate in ${checked} files — ${amounts.size} amounts checked.`,
 );
 process.exit(leaks ? 1 : 0);
