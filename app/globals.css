@@ -3768,9 +3768,25 @@ a.contact-reach:hover {
 
 /* ---- Rates approval: one small page, set like the rest ---- */
 .approve {
+  /* The whole window, with the content held in the middle of it. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
   max-width: 44rem;
+  min-height: 100svh;
   margin: 0 auto;
-  padding: 16svh 1.25rem 12svh;
+  padding: 14svh 1.25rem 10svh;
+}
+
+/* A page with nothing under it: the panel fills the window, square at the
+   bottom, and the footer it would have uncovered is not drawn at all. */
+.page-cover:has(.approve) {
+  border-radius: 0;
+}
+
+body:has(.approve) .site-footer {
+  display: none;
 }
 
 .approve-title {
