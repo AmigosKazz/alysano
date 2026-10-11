@@ -1,13 +1,15 @@
 import "server-only";
 
+import nodemailer, { type Transporter } from "nodemailer";
+
 /**
  * The one way out for email. A message is a plain-text note — nothing in it is
  * markup, so nothing a visitor typed can become any.
  *
- * Resend is called over its HTTP API; there is no SDK to carry. With no key set
- * the message is printed to the server log instead — in development only. In
- * production a missing key is an error, never a silent success: a visitor must
- * not be told their request was sent when it was not.
+ * Sent over SMTP (Gmail today, any provider by changing the `MAIL_*` values).
+ * With no `MAIL_HOST` set the message is printed to the server log instead — in
+ * development only. In production a missing server is an error, never a silent
+ * success: a visitor must not be told their request was sent when it was not.
  */
 
 export type Mail = {
@@ -39,31 +41,40 @@ export function siteUrl() {
   throw new Error("SITE_URL is not set — see .env.example");
 }
 
-export async function sendMail({ to, subject, text, replyTo }: Mail) {
-  const key = process.env.RESEND_API_KEY;
+/** One connection setup per server instance, built on first use. */
+let transport: Transporter | null = null;
 
-  if (!key) {
-    if (process.env.NODE_ENV === "production") throw new Error("RESEND_API_KEY is not set");
-    console.log(`\n[mail · not sent, no RESEND_API_KEY]\nTo: ${to}\nSubject: ${subject}\n\n${text}\n`);
+function smtp() {
+  if (transport) return transport;
+  const port = Number(env("MAIL_PORT"));
+  transport = nodemailer.createTransport({
+    host: env("MAIL_HOST"),
+    port,
+    // 465 speaks TLS from the first byte; 587 starts plain and upgrades.
+    secure: port === 465,
+    auth: { user: env("MAIL_USERNAME"), pass: env("MAIL_PASSWORD") },
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
+  });
+  return transport;
+}
+
+export async function sendMail({ to, subject, text, replyTo }: Mail) {
+  if (!process.env.MAIL_HOST) {
+    if (process.env.NODE_ENV === "production") throw new Error("MAIL_HOST is not set");
+    console.log(`\n[mail · not sent, no MAIL_HOST]\nTo: ${to}\nSubject: ${subject}\n\n${text}\n`);
     return;
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: env("RATES_MAIL_FROM"),
-      to,
-      subject,
-      text,
-      ...(replyTo ? { reply_to: replyTo } : {}),
-    }),
-    signal: AbortSignal.timeout(10_000),
+  await smtp().sendMail({
+    // Gmail only sends as the account it is signed in with (or its aliases).
+    from: { name: process.env.MAIL_FROM_NAME ?? "", address: env("MAIL_FROM") },
+    to,
+    subject,
+    text,
+    ...(replyTo ? { replyTo } : {}),
   });
-
-  if (!response.ok) {
-    throw new Error(`Resend answered ${response.status}: ${(await response.text()).slice(0, 300)}`);
-  }
 }
 
 /** Where requests are sent. */
