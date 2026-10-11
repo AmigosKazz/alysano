@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Cta } from "@/components/ui/Cta";
+import { FramedCta } from "@/components/ui/FramedCta";
 
 /**
  * The only place the person, rather than the work, is in view: a frame from the
@@ -99,7 +99,7 @@ export function About() {
         </div>
 
         <span data-fade className="about-action">
-          <Cta href="/about" label="More about me" />
+          <FramedCta href="/about" label="More about me" wide />
         </span>
 
         <div data-frame className="about-frame">

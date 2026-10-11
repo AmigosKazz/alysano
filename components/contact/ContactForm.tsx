@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { gsap } from "gsap";
-import { CtaButton } from "@/components/ui/Cta";
+import { FramedCtaButton } from "@/components/ui/FramedCta";
 import { CONTACT } from "@/lib/contact";
 import { categoryBySlug } from "@/lib/services";
 import { FIELDS, cue } from "./fields";
@@ -102,7 +102,7 @@ export function ContactForm() {
       </p>
 
       <div data-row className="form-action">
-        <CtaButton type="submit" label="Send request" className="cta--block" />
+        <FramedCtaButton type="submit" label="Send request" wide />
         <span role="status" className="form-status font-mono">
           {sent ? "Opening your mail app…" : ""}
         </span>

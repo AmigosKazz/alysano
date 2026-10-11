@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PriceTable } from "@/components/services/PriceTable";
 import { RatesGate } from "@/components/services/RatesGate";
-import { Cta } from "@/components/ui/Cta";
+import { FramedCta } from "@/components/ui/FramedCta";
 import { formatDiscount } from "@/lib/money";
 import { getRatesAccess } from "@/lib/rates/access";
 import { getRates } from "@/lib/rates.server";
@@ -273,7 +273,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               ) : null}
 
               <div className="service-action">
-                <Cta href={`/contact?service=${category.slug}`} label="Request a quote" />
+                <FramedCta href={`/contact?service=${category.slug}`} label="Request a quote" wide />
               </div>
 
               <section className="service-terms" aria-label="Terms">

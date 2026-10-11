@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Cta } from "@/components/ui/Cta";
+import { FramedCta } from "@/components/ui/FramedCta";
 import { PROJECTS } from "@/lib/projects";
 
 /** Previews are only worth their bandwidth where there is a pointer to hover with. */
@@ -104,7 +104,7 @@ export function Work() {
             frame by frame.
           </p>
 
-          <Cta data-cta href="/work" label="See all work" />
+          <FramedCta data-cta href="/work" label="See all work" wide />
         </div>
 
         <div className="work-grid">

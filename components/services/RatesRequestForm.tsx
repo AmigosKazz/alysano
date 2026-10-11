@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import { CtaButton } from "@/components/ui/Cta";
+import { FramedCtaButton } from "@/components/ui/FramedCta";
 import { FIELDS, cue } from "@/components/contact/fields";
 import { requestRates, type RequestState } from "@/lib/rates/actions";
 
@@ -83,7 +83,7 @@ export function RatesRequestForm({ slug }: { slug: string }) {
       </p>
 
       <div className="form-action">
-        <CtaButton type="submit" label="Ask for the rates" className="cta--block" disabled={pending} />
+        <FramedCtaButton type="submit" label="Ask for the rates" wide disabled={pending} />
         <span role="status" className="form-status font-mono">
           {pending ? "Sending…" : (state.error ?? "")}
         </span>

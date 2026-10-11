@@ -4,7 +4,7 @@ import { Fragment, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Cta } from "@/components/ui/Cta";
+import { FramedCta } from "@/components/ui/FramedCta";
 
 const MENU = ["Cut", "Copy", "Collaborate", "Share…"];
 
@@ -391,7 +391,7 @@ export function AboutStage() {
         </ul>
 
         <span data-fade className="about-stage-action">
-          <Cta href="/contact" label="Start a project" />
+          <FramedCta href="/contact" label="Start a project" wide />
         </span>
       </section>
     </div>

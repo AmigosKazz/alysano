@@ -15,7 +15,7 @@ function Arrow() {
   );
 }
 
-type Props = Omit<ComponentProps<typeof Link>, "children" | "aria-label"> & {
+type Own = {
   label: string;
   /** What a screen reader hears, when the visible label is the shorter form. */
   ariaLabel?: string;
@@ -23,21 +23,17 @@ type Props = Omit<ComponentProps<typeof Link>, "children" | "aria-label"> & {
   wide?: boolean;
 };
 
-/**
- * The framed call — corner marks, a label that rolls up as its double arrives
- * from below, and the one solid steel square on the page carrying an arrow that
- * leaves on the diagonal.
- *
- * Shared so the header's CONTACT and the services stage's rate link are the
- * same control rather than two that resemble each other.
- */
-export function FramedCta({ label, ariaLabel, wide, className, ...props }: Props) {
+type Props = Omit<ComponentProps<typeof Link>, "children" | "aria-label"> & Own;
+
+type ButtonProps = Omit<ComponentProps<"button">, "children" | "aria-label"> & Own;
+
+const classes = (wide?: boolean, className?: string) =>
+  `nav-cta${wide ? " nav-cta--wide" : ""}${className ? ` ${className}` : ""}`;
+
+/** The inside of the control, shared by the link and the button. */
+function Face({ label }: { label: string }) {
   return (
-    <Link
-      {...props}
-      aria-label={ariaLabel ?? label}
-      className={`nav-cta${wide ? " nav-cta--wide" : ""}${className ? ` ${className}` : ""}`}
-    >
+    <>
       <span className="nav-cta-frame">
         <i className="nav-cta-corners" aria-hidden="true" />
         <span
@@ -52,6 +48,32 @@ export function FramedCta({ label, ariaLabel, wide, className, ...props }: Props
         <Arrow />
         <Arrow />
       </span>
+    </>
+  );
+}
+
+/**
+ * The framed call — corner marks, a label that rolls up as its double arrives
+ * from below, and the one solid steel square on the page carrying an arrow that
+ * leaves on the diagonal.
+ *
+ * The site's one call to action: the header's CONTACT, and every other link or
+ * button that moves the visitor on, are this same control rather than several
+ * that resemble each other.
+ */
+export function FramedCta({ label, ariaLabel, wide, className, ...props }: Props) {
+  return (
+    <Link {...props} aria-label={ariaLabel ?? label} className={classes(wide, className)}>
+      <Face label={label} />
     </Link>
+  );
+}
+
+/** The same control where the action submits rather than navigates. */
+export function FramedCtaButton({ label, ariaLabel, wide, className, ...props }: ButtonProps) {
+  return (
+    <button {...props} aria-label={ariaLabel ?? label} className={classes(wide, className)}>
+      <Face label={label} />
+    </button>
   );
 }
