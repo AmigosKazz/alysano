@@ -3875,3 +3875,47 @@ a.contact-reach:hover {
   height: 1px;
   overflow: hidden;
 }
+
+/* ---- Rates approval: one small page, set like the rest ---- */
+.approve {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 16svh 1.25rem 12svh;
+}
+
+.approve-title {
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.approve-summary {
+  margin: 2.5rem 0 2rem;
+  border-top: 1px solid rgba(232, 230, 225, 0.12);
+}
+
+.approve-summary > div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(232, 230, 225, 0.12);
+  font-size: 0.8125rem;
+}
+
+.approve-summary dt {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 230, 225, 0.45);
+}
+
+.approve-summary dd {
+  color: var(--ivory);
+  overflow-wrap: anywhere;
+}
+
+.approve-action {
+  margin-top: 2rem;
+}

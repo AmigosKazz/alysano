@@ -4,9 +4,12 @@ import { CONTACT } from "@/lib/contact";
 import { categoryBySlug } from "@/lib/services";
 import { markPending } from "./access";
 import { notifyTo, oneLine, sendMail, siteUrl } from "./mail";
-import { signToken } from "./token";
+import { lifetime, signToken, verifyToken } from "./token";
 
 /**
+ * Two actions close the loop. `requestRates` is the visitor's; `approveRates`
+ * is Aly's, and is what turns a request into a link.
+ *
  * A visitor asks for the rates. Aly is told by email, with two links — this
  * service, or all of them — and nothing is granted until one is confirmed.
  *
@@ -96,4 +99,56 @@ export async function requestRates(_previous: RequestState, data: FormData): Pro
   // reply to something that never left.
   await markPending(email, slug);
   return {};
+}
+
+/* ------------------------------------------------------------------ */
+/* Approval                                                            */
+/* ------------------------------------------------------------------ */
+
+export type ApproveState = {
+  error?: string;
+  /** Set once the link has gone — what the page then reports. */
+  sent?: { email: string };
+};
+
+/**
+ * Aly confirms. The approval token is checked again here, not trusted from the
+ * page that showed it, and what it grants is read from the token — never from
+ * the form, which only carries the token back.
+ *
+ * Nothing records that a request was answered, so confirming twice sends two
+ * links. Both work and both lapse; the cost of the second is an email.
+ */
+export async function approveRates(_previous: ApproveState, data: FormData): Promise<ApproveState> {
+  const token = text(data, "t");
+  const verified = token ? await verifyToken("approve", token) : null;
+  if (!verified?.ok) return { error: "This approval link has lapsed or is not valid." };
+
+  const { email, name, from, scope } = verified.claims;
+  const covered =
+    scope === "all"
+      ? "every service"
+      : scope.map((slug) => categoryBySlug(slug)?.name ?? slug).join(", ");
+
+  try {
+    const access = await signToken("access", { email, from, scope });
+    const until = new Date(Date.now() + lifetime("access") * 1000);
+
+    await sendMail({
+      to: email,
+      subject: "Your access to the rates — Aly Sanoo",
+      text: [
+        `Hello ${name},`,
+        `Your request has been approved. This link opens the rates for ${covered}, in the browser you open it with, until ${until.toISOString().slice(0, 10)}:`,
+        `${siteUrl()}/rates/access?t=${access}`,
+        "Open it on the device you will read them on. If you did not ask for this, you can ignore this message.",
+        "— Aly Sanoo",
+      ].join("\n\n"),
+    });
+  } catch (error) {
+    console.error("[rates] access link not sent", error);
+    return { error: "The link could not be sent. Try again in a moment." };
+  }
+
+  return { sent: { email } };
 }
